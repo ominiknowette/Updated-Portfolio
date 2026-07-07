@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: "https://david-portfolio.vercel.app/sitemap.xml",
+    sitemap: "https://davidokafor.vercel.app/sitemap.xml",
   };
 }

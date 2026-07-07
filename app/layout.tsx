@@ -26,7 +26,7 @@ const mono = IBM_Plex_Mono({
   display: "swap",
 });
 
-const siteUrl = "https://david.pxxl.click";
+const siteUrl = "https://davidokafor.vercel.app";
 const siteTitle =
   "David Okafor | Frontend Developer, Mobile App Developer & Product Designer";
 const siteDescription =
