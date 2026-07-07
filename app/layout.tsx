@@ -26,41 +26,88 @@ const mono = IBM_Plex_Mono({
   display: "swap",
 });
 
+const siteUrl = "https://david.pxxl.click";
+const siteTitle =
+  "David Okafor | Frontend Developer, Mobile App Developer & Product Designer";
+const siteDescription =
+  "Official portfolio of David Okafor, a Frontend Developer, Mobile App Developer and Product Designer based in Lagos, Nigeria.";
+const profileImage = `${siteUrl}/images/david-profile.jpg`;
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://david-portfolio.vercel.app"),
+  metadataBase: new URL(siteUrl),
   title: {
-    default: "David — Frontend & Mobile Developer, Product Designer",
-    template: "%s — David",
+    default: siteTitle,
+    template: "%s | David Okafor",
   },
-  description:
-    "David (Okafor Onyekachukwu David) is a Lagos-based frontend developer, mobile app developer, and product designer building clean, thoughtful digital products.",
+  description: siteDescription,
   keywords: [
-    "David",
+    "David Okafor",
     "Okafor Onyekachukwu David",
-    "Frontend Developer Lagos",
-    "Mobile App Developer Nigeria",
-    "Product Designer",
+    "Frontend Developer Nigeria",
+    "Mobile App Developer Lagos",
+    "Product Designer Nigeria",
+    "React Developer",
     "Next.js Developer",
+    "Portfolio",
   ],
   authors: [{ name: "Okafor Onyekachukwu David" }],
+  verification: {
+    google: "2QeFlvPWgpN4QlLr4oxE2el55ejEkgAalSv5WW1YTfg",
+  },
+  alternates: {
+    canonical: siteUrl,
+  },
   openGraph: {
-    title: "David — Frontend & Mobile Developer, Product Designer",
-    description:
-      "Building digital experiences that are simple, thoughtful, and easy to use. Lagos, Nigeria.",
-    url: "https://david-portfolio.vercel.app",
-    siteName: "David",
+    title: siteTitle,
+    description: siteDescription,
+    url: siteUrl,
+    siteName: "David Okafor Portfolio",
     locale: "en_NG",
     type: "website",
+    images: [
+      {
+        url: profileImage,
+        width: 1200,
+        height: 630,
+        alt: "Okafor Onyekachukwu David",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "David — Frontend & Mobile Developer, Product Designer",
-    description: "Building digital experiences that are simple, thoughtful, and easy to use.",
+    title: siteTitle,
+    description: siteDescription,
+    images: [profileImage],
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
+};
+
+const personJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Okafor Onyekachukwu David",
+  alternateName: "David Okafor",
+  url: siteUrl,
+  image: profileImage,
+  jobTitle: "Frontend Developer",
+  worksFor: {
+    "@type": "Organization",
+    name: "Freelance",
+  },
+  sameAs: [
+    "https://github.com/ominiknowette",
+    "https://www.linkedin.com/in/onyekachukwu-okafor-445456313",
+  ],
 };
 
 export default function RootLayout({
@@ -71,6 +118,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${sans.variable} ${serif.variable} ${mono.variable}`}>
       <body className="relative bg-base text-ink min-h-screen flex flex-col">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+        />
         <AuroraBackground />
         <div className="pointer-events-none fixed inset-0 bg-noise opacity-[0.4] z-0" />
         <Navbar />
