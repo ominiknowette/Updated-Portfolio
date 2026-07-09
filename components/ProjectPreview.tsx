@@ -228,7 +228,12 @@ export default function ProjectPreview({
   const Comp = map[type];
 
   return (
-    <div className={cn("h-40 w-full rounded-[20px] bg-[#121212] p-2 sm:h-44 lg:h-48", className)}>
+    <div
+      className={cn(
+        "aspect-[16/9] w-full max-w-full min-w-0 overflow-hidden rounded-[20px] bg-[#121212] p-2 md:aspect-auto md:h-44 lg:h-48",
+        className
+      )}
+    >
       <Comp />
     </div>
   );

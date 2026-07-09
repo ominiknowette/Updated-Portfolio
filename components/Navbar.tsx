@@ -69,7 +69,7 @@ export default function Navbar() {
       <nav className="mx-auto flex h-[70px] w-full max-w-[1180px] items-center justify-between gap-4 px-4 sm:px-6 lg:h-[82px] lg:px-0">
         <BrandMark href="/" className="text-[25px] md:text-[24px]" />
 
-        <div className="hidden h-[46px] items-center gap-1 rounded-full border border-white/[0.07] bg-white/[0.035] px-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.035),0_8px_24px_rgba(0,0,0,0.22)] backdrop-blur-[14px] md:flex">
+        <div className="desktop-navigation hidden h-[46px] items-center gap-1 rounded-full border border-white/[0.07] bg-white/[0.035] px-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.035),0_8px_24px_rgba(0,0,0,0.22)] md:flex md:backdrop-blur-[14px]">
           {links.map((link) => {
             const active = pathname === link.href;
             return (
@@ -92,7 +92,7 @@ export default function Navbar() {
 
         <Link
           href="/contact"
-          className="hidden h-[46px] items-center rounded-[15px] border border-white/[0.07] bg-[linear-gradient(180deg,rgba(255,255,255,0.09),rgba(255,255,255,0.055))] px-6 text-[14px] font-semibold leading-none text-grid-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.045),0_8px_20px_rgba(0,0,0,0.2)] transition duration-200 ease-out hover:-translate-y-px hover:border-white/[0.11] hover:bg-[linear-gradient(180deg,rgba(255,255,255,0.12),rgba(255,255,255,0.07))] md:flex"
+          className="desktop-navigation hidden h-[46px] items-center rounded-[15px] border border-white/[0.07] bg-[linear-gradient(180deg,rgba(255,255,255,0.09),rgba(255,255,255,0.055))] px-6 text-[14px] font-semibold leading-none text-grid-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.045),0_8px_20px_rgba(0,0,0,0.2)] transition duration-200 ease-out hover:border-white/[0.11] hover:bg-[linear-gradient(180deg,rgba(255,255,255,0.12),rgba(255,255,255,0.07))] md:flex"
         >
           Let&rsquo;s talk
         </Link>
@@ -103,7 +103,7 @@ export default function Navbar() {
           aria-label="Open menu"
           aria-expanded={open}
           onClick={() => setOpen(true)}
-          className="fixed right-4 top-[13px] z-50 ml-auto flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/[0.07] bg-white/[0.045] text-grid-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.035)] md:static md:hidden"
+          className="mobile-navigation-trigger fixed right-4 top-[13px] z-50 ml-auto flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/[0.07] bg-white/[0.045] text-grid-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.035)] md:static md:hidden"
         >
           <Menu className="h-4 w-4" />
         </button>
@@ -111,7 +111,7 @@ export default function Navbar() {
 
       {open && (
         <div
-          className="fixed inset-0 z-50 bg-base/72 px-4 py-3 backdrop-blur-[4px] md:hidden"
+          className="fixed inset-0 z-50 bg-base/95 px-4 py-3 md:hidden"
           onMouseDown={(e) => {
             if (e.currentTarget === e.target) setOpen(false);
           }}
@@ -122,7 +122,7 @@ export default function Navbar() {
             aria-modal="true"
             aria-label="Mobile navigation"
             onKeyDown={handleMenuKeyDown}
-            className="gridx-card ml-auto w-[min(360px,calc(100vw-32px))] rounded-[24px] p-4 shadow-[0_22px_70px_-42px_rgba(0,0,0,0.95)]"
+            className="gridx-card mobile-menu-panel ml-auto w-full max-w-[360px] rounded-[24px] p-4 shadow-[0_22px_70px_-42px_rgba(0,0,0,0.95)]"
           >
             <div className="mb-5 flex items-center justify-between">
               <BrandMark href="/" className="text-[24px]" />

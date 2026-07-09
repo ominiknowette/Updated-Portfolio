@@ -13,8 +13,8 @@ const serviceIcons = [Code2, Smartphone, PenTool, Bug];
 export default function Home() {
   return (
     <div className="mx-auto w-full max-w-[1180px] px-4 pt-10 sm:px-6 lg:px-0 lg:pt-12">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-6 lg:grid-cols-12 lg:gap-5">
-        <GridCard className="order-1 p-6 md:col-span-6 md:p-6 lg:order-none lg:col-span-6 lg:h-[300px] lg:p-5">
+      <div className="home-grid grid grid-cols-1 gap-4 md:grid-cols-6 lg:grid-cols-12 lg:gap-5">
+        <GridCard className="home-profile-card order-1 p-6 md:col-span-6 md:p-6 lg:order-none lg:col-span-6 lg:h-[300px] lg:p-5">
           <div className="absolute left-5 top-5 z-20 inline-flex items-center gap-1.5 rounded-xl border border-white/[0.07] bg-[#171717]/95 px-2.5 py-1.5 shadow-[0_10px_26px_rgba(0,0,0,0.34)] md:left-6 md:top-6">
             <Code2 className="h-3.5 w-3.5 text-[#b4b4b8]" />
             <span className="text-[10px] font-medium text-[#a5a5aa]">Frontend</span>
@@ -39,8 +39,8 @@ export default function Home() {
           </div>
         </GridCard>
 
-        <div className="order-2 grid gap-4 md:col-span-6 lg:order-none lg:col-span-6 lg:h-[300px] lg:grid-rows-[44px_1fr] lg:gap-5">
-          <GridCard className="hidden h-[44px] rounded-[18px] px-5 py-0 lg:block">
+        <div className="home-featured-group order-2 grid gap-4 md:col-span-6 lg:order-none lg:col-span-6 lg:h-[300px] lg:grid-rows-[44px_1fr] lg:gap-5">
+          <GridCard className="home-ticker-card hidden h-[44px] rounded-[18px] px-5 py-0 lg:block">
             <div className="relative z-10 flex h-full items-center overflow-hidden">
               <div className="gridx-marquee gap-8 text-[9px] font-semibold uppercase tracking-[0.04em] text-grid-muted">
                 {[0, 1].map((copy) => (
@@ -51,9 +51,9 @@ export default function Home() {
               </div>
             </div>
           </GridCard>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-5">
-            <CredentialsCard className="min-h-[144px] lg:h-full" />
-            <GridCard href="/works" arrow className="min-h-[172px] lg:h-full">
+          <div className="home-mini-grid grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-5">
+            <CredentialsCard className="home-credentials-card min-h-[144px] lg:h-full" />
+            <GridCard href="/works" arrow className="home-projects-card min-h-[172px] lg:h-full">
               <div className="relative z-10 flex h-full flex-col justify-between">
                 <div className="mb-4 h-[86px] w-full overflow-hidden rounded-[14px] lg:mb-0 lg:h-[104px] lg:bg-[#252525] lg:p-2.5">
                   <div className="grid h-full grid-cols-[1fr_1.35fr] gap-2 rounded-[14px] border border-white/[0.055] bg-[#151515] p-2.5 lg:grid-cols-[1.05fr_1fr] lg:gap-3 lg:p-3">
@@ -76,7 +76,7 @@ export default function Home() {
           </div>
         </div>
 
-        <GridCard className="order-3 min-h-[170px] md:col-span-2 lg:order-none lg:col-span-3 lg:h-[230px]">
+        <GridCard className="home-stack-card order-3 min-h-[170px] md:col-span-2 lg:order-none lg:col-span-3 lg:h-[230px]">
           <div className="relative z-10 flex h-full flex-col justify-between">
             <div className="grid h-20 w-20 grid-cols-2 grid-rows-2 gap-1.5">
               <span className="rounded-full bg-accent-blue" />
@@ -93,7 +93,7 @@ export default function Home() {
           </div>
         </GridCard>
 
-        <GridCard href="/services" arrow className="order-4 min-h-[165px] md:col-span-4 lg:order-none lg:col-span-6 lg:h-[230px]">
+        <GridCard href="/services" arrow className="home-services-card order-4 min-h-[165px] md:col-span-4 lg:order-none lg:col-span-6 lg:h-[230px]">
           <div className="relative z-10 flex h-full flex-col justify-between gap-8 lg:gap-0">
             <div className="flex items-center justify-around pt-1 text-grid-soft lg:pt-4">
               {serviceIcons.map((Icon, index) => (
@@ -109,7 +109,7 @@ export default function Home() {
           </div>
         </GridCard>
 
-        <GridCard className="order-5 min-h-[155px] md:col-span-3 lg:order-none lg:col-span-3 lg:h-[230px]" arrow>
+        <GridCard className="home-profiles-card order-5 min-h-[155px] md:col-span-3 lg:order-none lg:col-span-3 lg:h-[230px]" arrow>
           <div className="relative z-10 flex h-full flex-col justify-between">
             <div className="grid w-fit grid-cols-3 gap-3 min-[390px]:gap-4">
               <SocialButton href={contact.github} label="GitHub" icon={Github} />
@@ -125,7 +125,7 @@ export default function Home() {
           </div>
         </GridCard>
 
-        <GridCard className="order-6 md:col-span-3 lg:order-none lg:col-span-6 lg:h-[205px]">
+        <GridCard className="home-stats-card order-6 md:col-span-3 lg:order-none lg:col-span-6 lg:h-[205px]">
           <div className="relative z-10 grid h-full grid-cols-1 gap-3 min-[390px]:grid-cols-2 lg:grid-cols-3">
             {stats.slice(0, 3).map((stat, index) => (
               <div key={stat.label} className={`flex min-h-[86px] flex-col items-center justify-center rounded-[16px] bg-[#1b1b1b] px-3 text-center lg:min-h-0 ${index === 2 ? "min-[390px]:col-span-2 lg:col-span-1" : ""}`}>
@@ -138,7 +138,7 @@ export default function Home() {
           </div>
         </GridCard>
 
-        <GridCard href="/contact" arrow className="order-7 min-h-[150px] md:col-span-6 lg:order-none lg:col-span-6 lg:h-[205px] lg:p-7">
+        <GridCard href="/contact" arrow className="home-cta-card order-7 min-h-[150px] md:col-span-6 lg:order-none lg:col-span-6 lg:h-[205px] lg:p-7">
           <MarkSpark className="h-8 w-8 text-white/18 lg:h-11 lg:w-11" />
           <div className="relative z-10 flex h-full items-center pt-4 lg:pt-0">
             <h2 className="font-display text-[26px] font-semibold leading-[1.08] text-grid-ink min-[390px]:text-[28px] lg:text-[30px]">

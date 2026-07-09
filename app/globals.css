@@ -2,12 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  min-width: 0;
+}
+
 * {
   scroll-behavior: smooth;
 }
 
 html,
 body {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  overflow-x: clip;
   background-color: #0f0f0f;
   color: #f5f5f5;
 }
@@ -18,7 +29,13 @@ body {
   text-rendering: optimizeLegibility;
   font-size: 14px;
   line-height: 1.5;
-  overflow-x: hidden;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
 }
 
 main,
@@ -26,6 +43,26 @@ header,
 footer {
   min-width: 0;
   overflow-x: clip;
+}
+
+.site-background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 12% 12%, rgba(92, 93, 246, 0.08), transparent 34%),
+    radial-gradient(circle at 85% 18%, rgba(255, 255, 255, 0.035), transparent 28%),
+    #0f0f0f;
+}
+
+.site-content {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  transform: none;
+  filter: none;
+  will-change: auto;
 }
 
 ::selection {
@@ -137,13 +174,115 @@ footer {
   }
 }
 
+@media (hover: hover) and (pointer: fine) {
+  .gridx-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.09);
+  }
+
+  .group:hover .corner-arrow {
+    transform: translate(2px, -2px) rotate(8deg);
+    color: #a0a0a0;
+  }
+
+  .group:hover .credential-signature {
+    transform: translateY(-2px);
+    opacity: 0.9;
+  }
+}
+
 @media (max-width: 767px) {
+  html,
+  body {
+    overflow-x: clip;
+  }
+
+  .desktop-navigation {
+    display: none !important;
+  }
+
+  .mobile-navigation-trigger {
+    display: inline-flex !important;
+  }
+
+  .home-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "profile"
+      "credentials"
+      "projects"
+      "stack"
+      "services"
+      "profiles"
+      "stats"
+      "cta";
+  }
+
+  .home-grid > * {
+    width: 100%;
+    min-width: 0;
+    grid-column: auto;
+  }
+
+  .home-featured-group,
+  .home-mini-grid {
+    display: contents;
+  }
+
+  .home-profile-card {
+    grid-area: profile;
+  }
+
+  .home-credentials-card {
+    grid-area: credentials;
+  }
+
+  .home-projects-card {
+    grid-area: projects;
+  }
+
+  .home-stack-card {
+    grid-area: stack;
+  }
+
+  .home-services-card {
+    grid-area: services;
+  }
+
+  .home-profiles-card {
+    grid-area: profiles;
+  }
+
+  .home-stats-card {
+    grid-area: stats;
+  }
+
+  .home-cta-card {
+    grid-area: cta;
+  }
+
+  .site-background {
+    background:
+      radial-gradient(circle at 18% 8%, rgba(92, 93, 246, 0.045), transparent 32%),
+      #0f0f0f;
+  }
+
   .sparkle-slow {
-    animation: none;
+    animation: none !important;
+    transform: none !important;
+    will-change: auto !important;
   }
 
   .gridx-card {
-    max-width: calc(100vw - 32px);
+    width: 100%;
+    max-width: 100%;
+    height: auto !important;
+    min-height: 0 !important;
+    transform: none !important;
+    will-change: auto !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.024),
       0 14px 28px -24px rgba(0, 0, 0, 0.9);
@@ -157,6 +296,30 @@ footer {
     background:
       radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.03), transparent 34%),
       linear-gradient(135deg, rgba(255, 255, 255, 0.012), transparent 42%);
+  }
+
+  .profile-motion-group,
+  .gridx-marquee,
+  .mobile-menu-panel,
+  .profile-image-stage {
+    animation: none !important;
+    transform: none !important;
+    will-change: auto !important;
+  }
+
+  .mobile-menu-panel {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  .corner-arrow,
+  .credential-signature {
+    transform: none !important;
+  }
+
+  .blur-2xl,
+  .blur-3xl {
+    filter: none !important;
   }
 }
 

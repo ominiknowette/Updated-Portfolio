@@ -87,7 +87,6 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 5,
 };
 
 const personJsonLd = {
@@ -120,9 +119,12 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
-        <Navbar />
-        <main className="relative z-10 flex-1">{children}</main>
-        <Footer />
+        <div className="site-background" aria-hidden="true" />
+        <div className="site-content relative z-10 flex min-h-screen flex-col">
+          <Navbar />
+          <main className="relative z-10 flex-1">{children}</main>
+          <Footer />
+        </div>
       </body>
     </html>
   );

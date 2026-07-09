@@ -20,7 +20,7 @@ export function GridCard({
   ariaLabel,
 }: GridCardProps) {
   const classes = cn(
-    "gridx-card group relative block w-full min-w-0 overflow-hidden rounded-[22px] p-5 text-left transition duration-200 hover:-translate-y-0.5 hover:border-white/[0.09] sm:rounded-[24px] lg:rounded-[26px]",
+    "gridx-card group relative block w-full min-w-0 overflow-hidden rounded-[22px] p-5 text-left transition duration-200 sm:rounded-[24px] lg:rounded-[26px]",
     className
   );
 
@@ -43,7 +43,7 @@ export function GridCard({
 
 export function CornerArrow() {
   return (
-    <span className="absolute bottom-4 right-4 flex h-[30px] w-[30px] items-center justify-center rounded-full border border-white/[0.12] text-[#5e5e5e] transition duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:rotate-[8deg] group-hover:text-[#a0a0a0]">
+    <span className="corner-arrow absolute bottom-4 right-4 flex h-[30px] w-[30px] items-center justify-center rounded-full border border-white/[0.12] text-[#5e5e5e] transition duration-200">
       <ArrowUpRight className="h-3.5 w-3.5" strokeWidth={1.5} />
     </span>
   );

@@ -17,7 +17,7 @@ export default function CredentialsCard({
             alt="David Okafor handwritten signature"
             width={600}
             height={200}
-            className="h-auto w-[150px] object-contain opacity-75 transition duration-300 ease-out group-hover:-translate-y-0.5 group-hover:opacity-90 sm:w-[160px] lg:w-[170px]"
+            className="credential-signature h-auto w-[150px] object-contain opacity-75 transition duration-300 ease-out sm:w-[160px] lg:w-[170px]"
           />
         </div>
         <div>
