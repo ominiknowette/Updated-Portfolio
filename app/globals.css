@@ -10,7 +10,8 @@
 }
 
 * {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
+  overflow-anchor: none;
 }
 
 html,
@@ -29,6 +30,7 @@ body {
   text-rendering: optimizeLegibility;
   font-size: 14px;
   line-height: 1.5;
+  overscroll-behavior-y: none;
 }
 
 img,
