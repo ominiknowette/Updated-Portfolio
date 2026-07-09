@@ -191,7 +191,7 @@ footer {
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 767px), (pointer: coarse) and (max-width: 1100px) {
   html,
   body {
     overflow-x: clip;
@@ -263,9 +263,14 @@ footer {
   }
 
   .site-background {
+    position: absolute;
     background:
       radial-gradient(circle at 18% 8%, rgba(92, 93, 246, 0.045), transparent 32%),
       #0f0f0f;
+  }
+
+  .home-ticker-card {
+    display: none !important;
   }
 
   .sparkle-slow {
@@ -305,6 +310,10 @@ footer {
     animation: none !important;
     transform: none !important;
     will-change: auto !important;
+  }
+
+  .gridx-marquee {
+    display: none !important;
   }
 
   .mobile-menu-panel {
