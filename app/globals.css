@@ -120,9 +120,16 @@ footer {
 }
 
 .gridx-marquee {
-  display: flex;
-  width: max-content;
-  animation: gridxMarquee 22s linear infinite;
+  display: inline-flex;
+  min-width: max-content;
+  flex-wrap: nowrap;
+  animation: gridxMarquee 30s linear infinite;
+}
+
+.gridx-marquee-item {
+  flex: 0 0 auto;
+  padding-right: 4rem;
+  white-space: nowrap;
 }
 
 .gridx-marquee:hover {
@@ -135,7 +142,7 @@ footer {
   }
 
   to {
-    transform: translateX(-50%);
+    transform: translateX(-33.333333%);
   }
 }
 

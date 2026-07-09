@@ -42,9 +42,9 @@ export default function Home() {
         <div className="home-featured-group order-2 grid gap-4 md:col-span-6 lg:order-none lg:col-span-6 lg:h-[300px] lg:grid-rows-[44px_1fr] lg:gap-5">
           <GridCard className="home-ticker-card hidden h-[44px] rounded-[18px] px-5 py-0 lg:block">
             <div className="relative z-10 flex h-full items-center overflow-hidden">
-              <div className="gridx-marquee gap-8 text-[9px] font-semibold uppercase tracking-[0.04em] text-grid-muted">
-                {[0, 1].map((copy) => (
-                  <span key={copy} className="whitespace-nowrap">
+              <div className="gridx-marquee text-[9px] font-semibold uppercase tracking-[0.04em] text-grid-muted">
+                {[0, 1, 2].map((copy) => (
+                  <span key={copy} className="gridx-marquee-item">
                     Latest work and featured - Building clear web and mobile experiences -
                   </span>
                 ))}
