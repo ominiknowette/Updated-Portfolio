@@ -9,32 +9,37 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        base: "#0b0b0c",
+        base: "#0f0f0f",
         card: {
-          DEFAULT: "#151515",
-          soft: "#181818",
-          raised: "#1c1c1f",
+          DEFAULT: "#181818",
+          soft: "#1d1d1d",
+          raised: "#202020",
         },
         ink: {
-          DEFAULT: "#ffffff",
-          soft: "#d4d4d8",
-          muted: "#8a8a8f",
+          DEFAULT: "#f5f5f5",
+          soft: "#b4b4b4",
+          muted: "#737373",
+        },
+        grid: {
+          ink: "#f5f5f5",
+          soft: "#b4b4b4",
+          muted: "#737373",
+          faint: "#515151",
         },
         accent: {
-          blue: "#5b7cfa",
-          violet: "#8b5cf6",
+          blue: "#5c5df6",
+          violet: "#7778ff",
         },
       },
       borderRadius: {
-        card: "28px",
-        "card-sm": "22px",
-        "card-lg": "32px",
+        card: "20px",
+        "card-sm": "18px",
+        "card-lg": "22px",
       },
       fontFamily: {
-        display: ["var(--font-body)", "sans-serif"],
+        display: ["var(--font-display)", "sans-serif"],
         body: ["var(--font-body)", "sans-serif"],
-        serif: ["var(--font-serif)", "serif"],
-        mono: ["var(--font-mono)", "monospace"],
+        mono: ["var(--font-body)", "sans-serif"],
       },
       boxShadow: {
         card: "0 1px 0 0 rgba(255,255,255,0.04) inset, 0 20px 50px -20px rgba(0,0,0,0.6)",

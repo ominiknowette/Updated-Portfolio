@@ -1,14 +1,16 @@
-export type ProjectStatus = "Completed" | "In Development";
+export type ProjectStatus = "Completed" | "In Development" | "Experience";
 
 export interface Project {
   slug: string;
   title: string;
+  organisation?: string;
   type: string;
+  category?: string;
   description: string;
   tools: string[];
   link: string | null;
   status: ProjectStatus;
-  preview: "calculator" | "romantic" | "dashboard" | "portfolio" | "school";
+  preview: "calculator" | "romantic" | "dashboard" | "portfolio" | "school" | "mobile-internship";
 }
 
 export const projects: Project[] = [
@@ -82,5 +84,18 @@ export const projects: Project[] = [
     link: null,
     status: "In Development",
     preview: "school",
+  },
+  {
+    slug: "bincom-mobile-app-intern",
+    title: "Mobile App Intern",
+    organisation: "Bincom Dev Center",
+    type: "Professional Experience / Mobile Development",
+    category: "Mobile Development",
+    description:
+      "Supported mobile application development tasks while gaining practical experience with interface implementation, debugging, collaborative workflows, and building for real users.",
+    tools: ["Mobile Development", "UI Implementation", "Debugging", "Team Collaboration"],
+    link: null,
+    status: "Experience",
+    preview: "mobile-internship",
   },
 ];

@@ -1,28 +1,20 @@
-import type { Metadata } from "next";
-import { Instrument_Sans, Instrument_Serif, IBM_Plex_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import AuroraBackground from "@/components/AuroraBackground";
 
-const sans = Instrument_Sans({
+const display = Poppins({
   subsets: ["latin"],
+  weight: ["500", "600"],
+  variable: "--font-display",
+  display: "swap",
+});
+
+const body = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
   variable: "--font-body",
-  display: "swap",
-});
-
-const serif = Instrument_Serif({
-  subsets: ["latin"],
-  weight: ["400"],
-  style: ["normal", "italic"],
-  variable: "--font-serif",
-  display: "swap",
-});
-
-const mono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-mono",
   display: "swap",
 });
 
@@ -92,6 +84,12 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
+
 const personJsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
@@ -116,14 +114,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${sans.variable} ${serif.variable} ${mono.variable}`}>
-      <body className="relative bg-base text-ink min-h-screen flex flex-col">
+    <html lang="en" className={`${display.variable} ${body.variable}`}>
+      <body className="relative flex min-h-screen flex-col bg-base text-ink">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
-        <AuroraBackground />
-        <div className="pointer-events-none fixed inset-0 bg-noise opacity-[0.4] z-0" />
         <Navbar />
         <main className="relative z-10 flex-1">{children}</main>
         <Footer />

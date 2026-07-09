@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useRef, useState, type ChangeEvent, type FormEvent, type Ref } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, CheckCircle2, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -64,9 +64,10 @@ function validateForm(values: Record<FieldName, string>) {
   return errors;
 }
 
-export default function ContactForm() {
+export default function ContactForm({ compact = false }: { compact?: boolean }) {
   const [status, setStatus] = useState<Status>("idle");
   const [errors, setErrors] = useState<FormErrors>({});
+  const nameInputRef = useRef<HTMLInputElement>(null);
 
   function clearErrorWhenValid(
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -133,26 +134,28 @@ export default function ContactForm() {
   if (status === "success") {
     return (
       <motion.div
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="flex h-full min-h-[320px] flex-col items-center justify-center text-center"
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+        className="flex min-h-[320px] flex-col items-center justify-center text-center"
         role="status"
       >
-        <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-accent-gradient">
-          <CheckCircle2 className="h-5 w-5 text-white" />
+        <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.045] text-accent-blue">
+          <CheckCircle2 className="h-5 w-5" />
         </span>
-        <h3 className="mt-4 font-display text-xl font-semibold leading-snug text-ink">
-          Message sent.
+        <h3 className="mt-4 font-display text-xl font-semibold leading-snug text-grid-ink">
+          Message sent
         </h3>
-        <p className="mt-2 max-w-sm text-[15px] leading-[1.62] text-ink-soft">
-          I&rsquo;ll get back to you soon.
+        <p className="mt-2 max-w-[340px] text-[15px] leading-[1.62] text-grid-soft">
+          Thanks for reaching out. I&rsquo;ll get back to you soon.
         </p>
         <button
           onClick={() => {
             setErrors({});
             setStatus("idle");
+            requestAnimationFrame(() => nameInputRef.current?.focus());
           }}
-          className="mt-5 text-sm font-semibold text-accent-blue hover:underline"
+          className="mt-5 h-11 rounded-full border border-white/[0.08] bg-white/[0.035] px-5 text-sm font-semibold text-grid-ink transition hover:border-white/[0.12] hover:bg-white/[0.055]"
         >
           Send another message
         </button>
@@ -161,7 +164,7 @@ export default function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex h-full flex-col gap-4" noValidate>
+    <form onSubmit={handleSubmit} className={cn("flex h-full flex-col", compact ? "gap-3" : "gap-4")} noValidate>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Field
           label="Name"
@@ -170,6 +173,8 @@ export default function ContactForm() {
           required
           error={errors.name}
           onChange={clearErrorWhenValid}
+          compact={compact}
+          inputRef={nameInputRef}
         />
         <Field
           label="Email"
@@ -179,6 +184,7 @@ export default function ContactForm() {
           required
           error={errors.email}
           onChange={clearErrorWhenValid}
+          compact={compact}
         />
       </div>
 
@@ -199,7 +205,8 @@ export default function ContactForm() {
           defaultValue=""
           onChange={clearErrorWhenValid}
           className={cn(
-            "w-full appearance-none rounded-2xl border bg-white/[0.02] px-4 py-3 text-[15px] text-ink outline-none transition-colors focus:border-accent-blue/50",
+            "w-full appearance-none border bg-[#1d1d1d] px-4 text-xs text-grid-ink outline-none transition-colors placeholder:text-grid-muted focus:border-accent-blue/50",
+            compact ? "h-[50px] rounded-md" : "rounded-2xl py-3 text-[15px]",
             errors.projectType ? "border-red-400/50" : "border-white/[0.08]"
           )}
         >
@@ -237,7 +244,8 @@ export default function ContactForm() {
           aria-describedby={errors.message ? "message-error" : undefined}
           onChange={clearErrorWhenValid}
           className={cn(
-            "w-full resize-none rounded-2xl border bg-white/[0.02] px-4 py-3 text-[15px] leading-[1.6] text-ink placeholder:text-ink-muted/60 outline-none transition-colors focus:border-accent-blue/50",
+            "w-full resize-none border bg-[#1d1d1d] px-4 py-3 text-xs leading-[1.5] text-grid-ink placeholder:text-grid-muted outline-none transition-colors focus:border-accent-blue/50",
+            compact ? "h-[138px] rounded-md" : "rounded-2xl text-[15px]",
             errors.message ? "border-red-400/50" : "border-white/[0.08]"
           )}
         />
@@ -269,7 +277,10 @@ export default function ContactForm() {
       <button
         type="submit"
         disabled={status === "sending"}
-        className="mt-1 inline-flex items-center justify-center gap-2 rounded-2xl bg-accent-gradient px-5 py-3.5 text-sm font-semibold text-white transition-transform hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
+        className={cn(
+          "mt-1 inline-flex items-center justify-center gap-2 bg-[#303030] text-xs font-semibold text-white transition hover:bg-[#383838] disabled:cursor-not-allowed disabled:opacity-70",
+          compact ? "h-11 rounded-md px-5" : "rounded-2xl px-5 py-3.5 text-sm"
+        )}
       >
         {status === "sending" ? "Sending..." : "Send message"}
         <Send className="h-3.5 w-3.5" />
@@ -286,6 +297,8 @@ function Field({
   required,
   error,
   onChange,
+  compact = false,
+  inputRef,
 }: {
   label: string;
   name: string;
@@ -294,6 +307,8 @@ function Field({
   required?: boolean;
   error?: string;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  compact?: boolean;
+  inputRef?: Ref<HTMLInputElement>;
 }) {
   const errorId = `${name}-error`;
 
@@ -312,8 +327,10 @@ function Field({
         aria-invalid={error ? "true" : undefined}
         aria-describedby={error ? errorId : undefined}
         onChange={onChange}
+        ref={inputRef}
         className={cn(
-          "w-full rounded-2xl border bg-white/[0.02] px-4 py-3 text-[15px] text-ink placeholder:text-ink-muted/60 outline-none transition-colors focus:border-accent-blue/50",
+          "w-full border bg-[#1d1d1d] px-4 text-grid-ink placeholder:text-grid-muted outline-none transition-colors focus:border-accent-blue/50",
+          compact ? "h-[50px] rounded-md text-xs" : "rounded-2xl py-3 text-[15px]",
           error ? "border-red-400/50" : "border-white/[0.08]"
         )}
       />

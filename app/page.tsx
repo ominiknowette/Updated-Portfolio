@@ -1,162 +1,151 @@
-import Link from "next/link";
-import { ArrowUpRight, MapPin } from "lucide-react";
-import Hero from "@/components/Hero";
-import BentoCard from "@/components/BentoCard";
-import StatsCard from "@/components/StatsCard";
-import ProjectCard from "@/components/ProjectCard";
-import ServiceCard from "@/components/ServiceCard";
-import SkillBadge from "@/components/SkillBadge";
-import { profile } from "@/data/profile";
-import { stats } from "@/data/stats";
+import { Bug, Code2, Github, Instagram, Linkedin, PenTool, Smartphone } from "lucide-react";
+import CredentialsCard from "@/components/CredentialsCard";
+import FloatingProfilePortrait from "@/components/FloatingProfilePortrait";
+import { GridCard, MarkSpark, Overline, SocialButton } from "@/components/GridPrimitives";
+import { contact, profile } from "@/data/profile";
 import { projects } from "@/data/projects";
 import { services } from "@/data/services";
 import { skills } from "@/data/skills";
+import { stats } from "@/data/stats";
+
+const serviceIcons = [Code2, Smartphone, PenTool, Bug];
 
 export default function Home() {
-  const featured = projects.slice(0, 2);
-
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8 sm:py-10">
-      {/* Hero + Profile */}
-      <Hero />
-
-      {/* Stats row */}
-      <div className="mt-4 sm:mt-5 grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-        {stats.map((s, i) => (
-          <BentoCard key={s.label} index={i} tag={`0${i + 1}`}>
-            <StatsCard {...s} />
-          </BentoCard>
-        ))}
-      </div>
-
-      {/* About preview + mini location card */}
-      <div className="mt-4 sm:mt-5 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5">
-        <BentoCard tag="ABOUT" className="lg:col-span-8">
-          <div className="flex h-full flex-col justify-between gap-6">
-            <div>
-              <p className="text-[13px] font-medium text-accent-blue">
-                WHO I AM
-              </p>
-              <h2 className="mt-2 font-display text-2xl font-semibold leading-[1.18] tracking-[-0.015em] text-ink sm:text-[2rem]">
-                {profile.about.short}
-              </h2>
-              <p className="mt-4 max-w-[62ch] text-[15.5px] leading-[1.68] text-ink-soft sm:text-[17px]">
-                {profile.about.paragraphs[0]}
-              </p>
-            </div>
-            <Link
-              href="/about"
-              className="inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-ink transition-colors hover:text-accent-blue"
-            >
-              More about me
-              <ArrowUpRight className="h-3.5 w-3.5" />
-            </Link>
+    <div className="mx-auto w-full max-w-[1180px] px-4 pt-10 sm:px-6 lg:px-0 lg:pt-12">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-6 lg:grid-cols-12 lg:gap-5">
+        <GridCard className="order-1 p-6 md:col-span-6 md:p-6 lg:order-none lg:col-span-6 lg:h-[300px] lg:p-5">
+          <div className="absolute left-5 top-5 z-20 inline-flex items-center gap-1.5 rounded-xl border border-white/[0.07] bg-[#171717]/95 px-2.5 py-1.5 shadow-[0_10px_26px_rgba(0,0,0,0.34)] md:left-6 md:top-6">
+            <Code2 className="h-3.5 w-3.5 text-[#b4b4b8]" />
+            <span className="text-[10px] font-medium text-[#a5a5aa]">Frontend</span>
           </div>
-        </BentoCard>
-
-        <BentoCard tag="BASE" className="lg:col-span-4">
-          <div className="flex h-full flex-col justify-between gap-6">
-            <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-white/[0.04] card-border">
-              <MapPin className="h-5 w-5 text-accent-violet" />
-            </div>
+          <div className="absolute bottom-5 right-5 z-20 inline-flex items-center gap-1.5 rounded-xl border border-white/[0.07] bg-[#171717]/95 px-2.5 py-1.5 shadow-[0_10px_26px_rgba(0,0,0,0.34)] md:bottom-6 md:right-6">
+            <Smartphone className="h-3.5 w-3.5 text-[#b4b4b8]" />
+            <span className="text-[10px] font-medium text-[#a5a5aa]">Mobile</span>
+          </div>
+          <div className="relative z-10 flex h-full flex-col items-center justify-center gap-4 text-center lg:gap-2.5">
+            <FloatingProfilePortrait priority showBadges={false} />
             <div>
-              <p className="font-display text-xl font-semibold leading-snug text-ink">
+              <h1 className="mx-auto max-w-[19ch] text-balance font-display text-[18px] font-semibold leading-[1.12] text-grid-ink min-[390px]:max-w-[20ch] min-[390px]:text-[19px] md:max-w-[24ch] md:text-[21px] lg:text-[23px]">
+                {profile.fullName}
+              </h1>
+              <p className="mx-auto mt-2 max-w-[30ch] text-xs leading-[1.45] text-grid-soft md:max-w-[360px] md:text-[14px] lg:text-[14px]">
+                {profile.title}
+              </p>
+              <p className="mt-1.5 text-[12px] font-semibold text-[#a5a5aa] md:text-[13px]">
                 {profile.location}
               </p>
-              <p className="mt-1 text-[15px] leading-[1.6] text-ink-soft">
-                Open to remote work &amp; selected local projects.
-              </p>
             </div>
           </div>
-        </BentoCard>
-      </div>
+        </GridCard>
 
-      {/* Featured Projects */}
-      <div className="mt-4 sm:mt-5">
-        <div className="mb-4 sm:mb-5 flex items-end justify-between">
-          <div>
-            <p className="text-[13px] font-medium text-accent-blue">
-              SELECTED WORK
-            </p>
-            <h2 className="mt-2 font-display text-2xl font-semibold leading-tight tracking-[-0.015em] text-ink sm:text-[2rem]">
-              Featured Projects
-            </h2>
+        <div className="order-2 grid gap-4 md:col-span-6 lg:order-none lg:col-span-6 lg:h-[300px] lg:grid-rows-[44px_1fr] lg:gap-5">
+          <GridCard className="hidden h-[44px] rounded-[18px] px-5 py-0 lg:block">
+            <div className="relative z-10 flex h-full items-center overflow-hidden">
+              <div className="gridx-marquee gap-8 text-[9px] font-semibold uppercase tracking-[0.04em] text-grid-muted">
+                {[0, 1].map((copy) => (
+                  <span key={copy} className="whitespace-nowrap">
+                    Latest work and featured - Building clear web and mobile experiences -
+                  </span>
+                ))}
+              </div>
+            </div>
+          </GridCard>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-5">
+            <CredentialsCard className="min-h-[144px] lg:h-full" />
+            <GridCard href="/works" arrow className="min-h-[172px] lg:h-full">
+              <div className="relative z-10 flex h-full flex-col justify-between">
+                <div className="mb-4 h-[86px] w-full overflow-hidden rounded-[14px] lg:mb-0 lg:h-[104px] lg:bg-[#252525] lg:p-2.5">
+                  <div className="grid h-full grid-cols-[1fr_1.35fr] gap-2 rounded-[14px] border border-white/[0.055] bg-[#151515] p-2.5 lg:grid-cols-[1.05fr_1fr] lg:gap-3 lg:p-3">
+                    <div className="rounded-lg bg-accent-blue/10" />
+                    <div className="flex flex-col justify-center gap-1.5 lg:gap-2">
+                      <span className="h-2 w-20 rounded-full bg-grid-ink/65 lg:w-[80%]" />
+                      <span className="h-2 w-24 rounded-full bg-white/12 lg:w-full" />
+                      <span className="h-5 w-16 rounded-full bg-accent-blue/20 lg:h-6 lg:w-[68%]" />
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <Overline>Showcase</Overline>
+                  <h2 className="mt-2 font-display text-base font-semibold text-grid-ink">
+                    Projects
+                  </h2>
+                </div>
+              </div>
+            </GridCard>
           </div>
-          <Link
-            href="/works"
-            className="hidden sm:inline-flex items-center gap-1.5 text-sm font-semibold text-ink-muted transition-colors hover:text-ink"
-          >
-            View all works
-            <ArrowUpRight className="h-3.5 w-3.5" />
-          </Link>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
-          {featured.map((p, i) => (
-            <BentoCard key={p.slug} index={i} tag={`PROJECT_0${i + 1}`}>
-              <ProjectCard project={p} />
-            </BentoCard>
-          ))}
-        </div>
-        <Link
-          href="/works"
-          className="mt-4 inline-flex sm:hidden items-center gap-1.5 text-sm font-semibold text-ink-muted"
-        >
-          View all works
-          <ArrowUpRight className="h-3.5 w-3.5" />
-        </Link>
-      </div>
 
-      {/* Services preview */}
-      <div className="mt-4 sm:mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-        {services.map((s, i) => (
-          <BentoCard key={s.title} index={i} tag={`SVC_0${i + 1}`}>
-            <ServiceCard {...s} />
-          </BentoCard>
-        ))}
-      </div>
+        <GridCard className="order-3 min-h-[170px] md:col-span-2 lg:order-none lg:col-span-3 lg:h-[230px]">
+          <div className="relative z-10 flex h-full flex-col justify-between">
+            <div className="grid h-20 w-20 grid-cols-2 grid-rows-2 gap-1.5">
+              <span className="rounded-full bg-accent-blue" />
+              <span className="rounded-tl-2xl rounded-br-2xl bg-[#ffbf3f]" />
+              <span className="rounded-bl-2xl rounded-tr-2xl bg-[#ff4d4d]" />
+              <span className="rounded-full bg-[#3aa7ff]" />
+            </div>
+            <div>
+              <Overline>Stack</Overline>
+              <h2 className="mt-2 font-display text-base font-semibold text-grid-ink">
+                {skills.slice(0, 3).join(", ")}
+              </h2>
+            </div>
+          </div>
+        </GridCard>
 
-      {/* Skills + Contact CTA */}
-      <div className="mt-4 sm:mt-5 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5">
-        <BentoCard tag="STACK" className="lg:col-span-7">
-          <div>
-            <p className="font-mono text-[11px] font-medium tracking-[0.06em] text-accent-blue">
-              TECHNOLOGY STACK
-            </p>
-            <h3 className="mt-2 font-display text-xl font-semibold leading-snug text-ink">
-              Tools I build with
-            </h3>
-            <div className="mt-5 flex flex-wrap gap-2">
-              {skills.map((skill) => (
-                <SkillBadge key={skill} label={skill} />
+        <GridCard href="/services" arrow className="order-4 min-h-[165px] md:col-span-4 lg:order-none lg:col-span-6 lg:h-[230px]">
+          <div className="relative z-10 flex h-full flex-col justify-between gap-8 lg:gap-0">
+            <div className="flex items-center justify-around pt-1 text-grid-soft lg:pt-4">
+              {serviceIcons.map((Icon, index) => (
+                <Icon key={services[index].title} className="h-6 w-6 lg:h-7 lg:w-7" strokeWidth={1.5} />
               ))}
             </div>
-          </div>
-        </BentoCard>
-
-        <BentoCard glow tag="CTA" className="lg:col-span-5">
-          <div className="flex h-full flex-col justify-between gap-6">
             <div>
-              <p className="text-[13px] font-medium text-accent-blue">
-                LET&rsquo;S BUILD
-              </p>
-              <h3 className="mt-2 font-display text-2xl font-semibold leading-tight tracking-[-0.015em] text-ink sm:text-[2rem]">
-                Let&rsquo;s build something{" "}
-                <span className="font-serif italic font-normal text-ink-soft">useful.</span>
-              </h3>
-              <p className="mt-3 max-w-[62ch] text-[15px] leading-[1.65] text-ink-soft">
-                Have an idea, project, or digital product you want to bring
-                to life? Send me a message and let&rsquo;s talk through it.
-              </p>
+              <Overline>Specialization</Overline>
+              <h2 className="mt-2 font-display text-base font-semibold text-grid-ink">
+                Services Offering
+              </h2>
             </div>
-            <Link
-              href="/contact"
-              className="inline-flex w-fit items-center gap-1.5 rounded-2xl bg-accent-gradient px-5 py-3 text-sm font-semibold text-white transition-transform hover:scale-[1.02]"
-            >
-              Let&rsquo;s build together
-              <ArrowUpRight className="h-3.5 w-3.5" />
-            </Link>
           </div>
-        </BentoCard>
+        </GridCard>
+
+        <GridCard className="order-5 min-h-[155px] md:col-span-3 lg:order-none lg:col-span-3 lg:h-[230px]" arrow>
+          <div className="relative z-10 flex h-full flex-col justify-between">
+            <div className="grid w-fit grid-cols-3 gap-3 min-[390px]:gap-4">
+              <SocialButton href={contact.github} label="GitHub" icon={Github} />
+              <SocialButton href={contact.linkedin} label="LinkedIn" icon={Linkedin} />
+              <SocialButton href={contact.instagramUrl} label="Instagram" icon={Instagram} />
+            </div>
+            <div>
+              <Overline>Stay with me</Overline>
+              <h2 className="mt-2 font-display text-base font-semibold text-grid-ink">
+                Profiles
+              </h2>
+            </div>
+          </div>
+        </GridCard>
+
+        <GridCard className="order-6 md:col-span-3 lg:order-none lg:col-span-6 lg:h-[205px]">
+          <div className="relative z-10 grid h-full grid-cols-1 gap-3 min-[390px]:grid-cols-2 lg:grid-cols-3">
+            {stats.slice(0, 3).map((stat, index) => (
+              <div key={stat.label} className={`flex min-h-[86px] flex-col items-center justify-center rounded-[16px] bg-[#1b1b1b] px-3 text-center lg:min-h-0 ${index === 2 ? "min-[390px]:col-span-2 lg:col-span-1" : ""}`}>
+                <span className="font-display text-[27px] font-semibold text-grid-ink">{stat.value}</span>
+                <span className="mt-2 text-[9px] font-semibold uppercase leading-3 tracking-[0.04em] text-grid-muted">
+                  {stat.label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </GridCard>
+
+        <GridCard href="/contact" arrow className="order-7 min-h-[150px] md:col-span-6 lg:order-none lg:col-span-6 lg:h-[205px] lg:p-7">
+          <MarkSpark className="h-8 w-8 text-white/18 lg:h-11 lg:w-11" />
+          <div className="relative z-10 flex h-full items-center pt-4 lg:pt-0">
+            <h2 className="font-display text-[26px] font-semibold leading-[1.08] text-grid-ink min-[390px]:text-[28px] lg:text-[30px]">
+              Let&rsquo;s<br />work <span className="text-accent-blue">together.</span>
+            </h2>
+          </div>
+        </GridCard>
       </div>
     </div>
   );

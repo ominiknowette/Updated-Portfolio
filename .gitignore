@@ -5,3 +5,9 @@
 .DS_Store
 *.tsbuildinfo
 next-env.d.ts
+
+# Local browser/screenshot QA artifacts
+edge-*/
+qa-*.png
+visual-*.png
+.old-portrait-reference/

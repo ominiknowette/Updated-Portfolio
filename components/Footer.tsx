@@ -1,54 +1,34 @@
 import Link from "next/link";
-import { Github, Linkedin, Instagram, Mail } from "lucide-react";
-import { contact } from "@/data/profile";
+import BrandMark from "@/components/BrandMark";
 import { currentYear } from "@/lib/utils";
 
-const socials = [
-  { icon: Github, href: contact.github, label: "GitHub" },
-  { icon: Linkedin, href: contact.linkedin, label: "LinkedIn" },
-  { icon: Instagram, href: contact.instagramUrl, label: "Instagram" },
-  { icon: Mail, href: `mailto:${contact.email}`, label: "Email" },
+const links = [
+  { label: "Home", href: "/" },
+  { label: "About", href: "/about" },
+  { label: "Works", href: "/works" },
+  { label: "Services", href: "/services" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export default function Footer() {
   return (
-    <footer className="relative z-10 border-t border-white/[0.06] mt-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
-          <div>
-            <Link href="/" className="font-display text-2xl font-semibold tracking-[-0.01em] text-ink">
-              David<span className="text-accent-blue">.</span>
+    <footer className="relative z-10 pb-8 pt-10 md:pb-11 md:pt-[68px]">
+      <div className="mx-auto flex w-full max-w-[1180px] flex-col items-center px-4 text-center sm:px-6 lg:px-0">
+        <BrandMark href="/" className="text-[21px] md:text-[22px]" />
+        <nav className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 md:mt-7 md:gap-x-8">
+          {links.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="text-[10px] font-semibold uppercase tracking-[0.08em] text-grid-muted transition hover:text-grid-soft"
+            >
+              {link.label}
             </Link>
-            <p className="mt-2 max-w-sm text-[15px] leading-[1.62] text-ink-soft">
-              I build clean websites, mobile experiences, and digital
-              products from Lagos, Nigeria.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {socials.map((s) => (
-              <a
-                key={s.label}
-                href={s.href}
-                target={s.href.startsWith("http") ? "_blank" : undefined}
-                rel={s.href.startsWith("http") ? "noreferrer" : undefined}
-                aria-label={s.label}
-                className="inline-flex h-11 w-11 items-center justify-center rounded-full card-border bg-card-soft text-ink-muted transition-colors hover:text-ink hover:border-white/20"
-              >
-                <s.icon className="h-4 w-4" />
-              </a>
-            ))}
-          </div>
-        </div>
-
-        <div className="mt-10 flex flex-col-reverse sm:flex-row items-start sm:items-center justify-between gap-4 border-t border-white/[0.06] pt-6">
-          <p className="text-xs text-ink-muted">
-            © {currentYear()} David. All rights reserved.
-          </p>
-          <p className="font-mono text-[11px] text-ink-muted">
-            Status: <span className="text-accent-blue">Open to interesting projects</span>
-          </p>
-        </div>
+          ))}
+        </nav>
+        <p className="mt-5 text-[10px] text-grid-faint md:mt-8">
+          © {currentYear()} David Okafor. All rights reserved.
+        </p>
       </div>
     </footer>
   );

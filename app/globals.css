@@ -8,66 +8,156 @@
 
 html,
 body {
-  background-color: #0b0b0c;
-  color: #ffffff;
+  background-color: #0f0f0f;
+  color: #f5f5f5;
 }
 
 body {
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  font-size: 16px;
-  line-height: 1.65;
+  font-size: 14px;
+  line-height: 1.5;
   overflow-x: hidden;
 }
 
+main,
+header,
+footer {
+  min-width: 0;
+  overflow-x: clip;
+}
+
 ::selection {
-  background: #5b7cfa;
+  background: #5c5df6;
   color: #ffffff;
 }
 
-/* subtle scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
+
 ::-webkit-scrollbar-track {
-  background: #0b0b0c;
+  background: #0f0f0f;
 }
+
 ::-webkit-scrollbar-thumb {
-  background: #232326;
+  background: #2a2a2a;
   border-radius: 999px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #2e2e33;
-}
-
-.bg-noise {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px);
-  background-size: 22px 22px;
-}
-
-.glass {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-@media (min-width: 640px) {
-  .glass {
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-  }
+  background: #383838;
 }
 
 .text-gradient {
-  background: linear-gradient(135deg, #5b7cfa 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, #5c5df6 0%, #7778ff 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
 .card-border {
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.055);
+}
+
+.gridx-card {
+  border: 1px solid rgba(255, 255, 255, 0.065);
+  background:
+    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.045), transparent 35%),
+    linear-gradient(145deg, #202020 0%, #191919 44%, #121212 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.028),
+    0 22px 44px -34px rgba(0, 0, 0, 0.95),
+    0 8px 22px -18px rgba(0, 0, 0, 0.75);
+}
+
+.gridx-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.035), transparent 35%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.018), transparent 42%);
+}
+
+.gridx-marquee {
+  display: flex;
+  width: max-content;
+  animation: gridxMarquee 22s linear infinite;
+}
+
+.gridx-marquee:hover {
+  animation-play-state: paused;
+}
+
+@keyframes gridxMarquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.sparkle-slow {
+  transform-origin: center;
+  animation: sparkleSlow 16s ease-in-out infinite alternate;
+}
+
+@keyframes sparkleSlow {
+  0% {
+    opacity: 0.62;
+    transform: rotate(-3deg);
+  }
+
+  100% {
+    opacity: 0.9;
+    transform: rotate(5deg);
+  }
+}
+
+@keyframes profile-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(0, -4px, 0);
+  }
+}
+
+@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+  .profile-motion-group {
+    animation: profile-float 8s ease-in-out infinite;
+    will-change: transform;
+  }
+}
+
+@media (max-width: 767px) {
+  .sparkle-slow {
+    animation: none;
+  }
+
+  .gridx-card {
+    max-width: calc(100vw - 32px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.024),
+      0 14px 28px -24px rgba(0, 0, 0, 0.9);
+  }
+
+  .gridx-card:hover {
+    transform: none !important;
+  }
+
+  .gridx-card::before {
+    background:
+      radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.03), transparent 34%),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.012), transparent 42%);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -77,134 +167,23 @@ body {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-}
 
-/* ==========================================================================
-   Aurora background — "soft living light behind glass UI". Three static
-   layers: a base gradient, an ambient glow field, and a single aurora
-   ribbon, all pure CSS on absolutely-positioned divs inside one `fixed`
-   wrapper (see AuroraBackground.tsx). Only `translate3d` is ever animated —
-   no scale, no blur animation, no width/height/top/left/box-shadow — so
-   every moving layer is cheap, compositor-only motion that can never
-   trigger layout or paint on the UI above it. Blur is applied once as a
-   static filter and never changes. ========================================================================== */
-
-/* Isolate the whole background in its own stacking/paint context so it can
-   never influence layout or interact with transforms elsewhere on the
-   page — the vibration bug this replaces came from transform ambiguity
-   between layers, not from anything outside this component. */
-.aurora-root {
-  contain: paint;
-  isolation: isolate;
-}
-
-/* Layer A — static dark navy/black base with a subtle vignette. Never
-   animates; this is the canvas the glow layers sit on top of. */
-.aurora-base {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 120% 80% at 50% 35%, #0b0b18 0%, #070816 55%, #050510 100%);
-}
-
-/* Layer B — ambient glow field. Two large, very-low-opacity radial
-   gradients that drift almost imperceptibly. Desktop only. */
-.aurora-glow-a {
-  position: absolute;
-  top: -10%;
-  left: -10%;
-  width: 80%;
-  height: 70%;
-  background: radial-gradient(circle at 30% 30%, rgba(139, 92, 246, 0.16), transparent 70%);
-  filter: blur(100px);
-  animation: auroraDriftA 36s ease-in-out infinite alternate;
-  will-change: transform;
-}
-
-.aurora-glow-b {
-  position: absolute;
-  bottom: -15%;
-  right: -10%;
-  width: 75%;
-  height: 65%;
-  background: radial-gradient(circle at 70% 70%, rgba(91, 124, 250, 0.14), transparent 70%);
-  filter: blur(110px);
-  animation: auroraDriftB 40s ease-in-out infinite alternate;
-  will-change: transform;
-}
-
-/* Layer C — single soft aurora ribbon, drifting sideways through the
-   lower-middle of the frame. The only layer that survives on mobile. */
-.aurora-ribbon {
-  position: absolute;
-  left: -20%;
-  right: -20%;
-  top: 38%;
-  height: 42%;
-  background: linear-gradient(
-    100deg,
-    transparent 0%,
-    rgba(91, 124, 250, 0.22) 28%,
-    rgba(168, 85, 247, 0.26) 55%,
-    rgba(236, 72, 153, 0.16) 80%,
-    transparent 100%
-  );
-  filter: blur(70px);
-  animation: auroraDriftRibbon 32s ease-in-out infinite alternate;
-  will-change: transform;
-}
-
-/* Every keyframe below moves translate3d only, within a small range, and
-   never touches scale, blur, or opacity — this is what keeps the motion
-   feeling like slow drifting light instead of a pulsing or vibrating
-   template animation. */
-@keyframes auroraDriftA {
-  0% { transform: translate3d(0, 0, 0); }
-  100% { transform: translate3d(4%, 3%, 0); }
-}
-
-@keyframes auroraDriftB {
-  0% { transform: translate3d(0, 0, 0); }
-  100% { transform: translate3d(-4%, -3%, 0); }
-}
-
-@keyframes auroraDriftRibbon {
-  0% { transform: translate3d(-3%, 0, 0); }
-  100% { transform: translate3d(3%, 0, 0); }
-}
-
-/* Desktop-only ambient glow layers — hidden entirely on mobile so only the
-   single ribbon layer ever animates on small/low-end screens. */
-@media (max-width: 767px) {
-  .aurora-desktop-only {
-    display: none;
+  .gridx-marquee {
+    animation: none;
   }
 
-  .aurora-ribbon {
-    height: 46%;
-    opacity: 0.4;
-    filter: blur(50px);
-    animation-name: auroraDriftRibbonMobile;
-    animation-duration: 40s;
+  .sparkle-slow {
+    animation: none;
   }
 
-  @keyframes auroraDriftRibbonMobile {
-    0% { transform: translate3d(-2%, 0, 0); }
-    100% { transform: translate3d(2%, 0, 0); }
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .aurora-glow-a,
-  .aurora-glow-b,
-  .aurora-ribbon {
-    animation: none !important;
-    transform: none !important;
+  .profile-motion-group {
+    animation: none;
+    transform: none;
   }
 }
 
 :focus-visible {
-  outline: 2px solid #8b5cf6;
+  outline: 2px solid rgba(92, 93, 246, 0.55);
   outline-offset: 3px;
   border-radius: 6px;
 }
