@@ -28,14 +28,14 @@ let viewerScrollSnapshot=null;
 let mapFocusSlug=null;
 let revealObserver=null;
 let suppressScrollPersistence=false;
-let scrollPersistFrame=0;
+let scrollPersistTimer=0;
 const viewportSnapshots=new Map();
 let snapshotTimer=0;
 let idlePrefetchHandle=0;
 let idlePrefetchUsesTimeout=false;
 let snapshotIdleHandle=0;
 let snapshotIdleUsesTimeout=false;
-let lastInputAt=0;
+let lastInputAt=performance.now();
 let snapshotCapture=null;
 let mapDrawFrame=0;
 
@@ -84,12 +84,15 @@ function topScrollPosition(root=app){
 function historyScrollState(){return {...(history.state||{}),path:currentPath,scrollPosition:captureScrollPosition(app)}}
 function persistScrollPosition(){
   if(suppressScrollPersistence||turning)return;
-  const position=captureScrollPosition(app);scrollMemory.set(currentPath,position);
-  history.replaceState({...historyScrollState(),scrollPosition:position},'',location.href);
+  // Keep the in-session return point current without mutating browser history
+  // while the user is scrolling. Navigation and pagehide save exact positions.
+  scrollMemory.set(currentPath,captureScrollPosition(app));
 }
 function scheduleScrollPersistence(){
-  if(suppressScrollPersistence||turning||scrollPersistFrame)return;
-  scrollPersistFrame=requestAnimationFrame(()=>{scrollPersistFrame=0;persistScrollPosition()});
+  if(suppressScrollPersistence||turning||scrollPersistTimer)return;
+  // History state only needs a recent checkpoint while scrolling; replacing
+  // it every animation frame forced synchronous work during mobile momentum.
+  scrollPersistTimer=setTimeout(()=>{scrollPersistTimer=0;persistScrollPosition()},180);
 }
 function routeLink(path,label,mode='',klass=''){
   return `<a href="${path}" data-route="${path}"${mode?` data-turn="${mode}"`:''}${klass?` class="${klass}"`:''}>${label}</a>`;
@@ -242,12 +245,12 @@ function scheduleSnapshot(){
       // Prepare the current viewport early enough that the first page turn is
       // usually backed by a ready sheet. Keep the input-pending guard so the
       // capture never competes with an active scroll, tap, or key press.
-      if(quietFor<250||inputPending){
+      if(quietFor<1400||inputPending){
         snapshotTimer=setTimeout(()=>{
           snapshotTimer=0;
           snapshotIdleUsesTimeout=!window.requestIdleCallback;
           snapshotIdleHandle=window.requestIdleCallback?requestIdleCallback(run,{timeout:600}):setTimeout(run,100);
-        },inputPending?120:Math.max(60,250-quietFor));
+        },inputPending?180:Math.max(120,1400-quietFor));
         return;
       }
       snapshotFor(page,path,scrollY).catch(()=>{});
@@ -485,7 +488,7 @@ async function navigate(path,mode='direct',push=true,restore=null){
   const outgoingPosition=captureScrollPosition(old);
   scrollMemory.set(oldPath,outgoingPosition);
   if(push){
-    if(scrollPersistFrame){cancelAnimationFrame(scrollPersistFrame);scrollPersistFrame=0}
+    if(scrollPersistTimer){clearTimeout(scrollPersistTimer);scrollPersistTimer=0}
     history.replaceState({...history.state,path:oldPath,scrollPosition:outgoingPosition},'',location.href);
   }
   const destinationPosition=mode==='restore'
@@ -542,9 +545,9 @@ document.addEventListener('click',e=>{
   navigate(target,resolvedTurn(currentPath,target,link.dataset.turn),true,restoreMap?{scrollPosition:scrollMemory.get(target)||{windowY:0,containerY:0}}:null);
 });
 addEventListener('popstate',event=>navigate(location.pathname,routeTurn(currentPath,normalize(location.pathname)),false,{scrollPosition:event.state?.scrollPosition||scrollMemory.get(normalize(location.pathname))||{windowY:0,containerY:0}}));
-addEventListener('scroll',()=>{scheduleScrollPersistence();scheduleSnapshot()},{passive:true,capture:true});
+addEventListener('scroll',()=>{lastInputAt=performance.now();scheduleScrollPersistence();scheduleSnapshot()},{passive:true,capture:true});
 const noteInput=()=>{lastInputAt=performance.now()};
-for(const type of ['pointerdown','keydown','wheel','touchstart'])addEventListener(type,noteInput,{passive:type!=='keydown',capture:true});
+for(const type of ['pointerdown','keydown','wheel','touchstart','touchmove','touchend'])addEventListener(type,noteInput,{passive:type!=='keydown',capture:true});
 document.addEventListener('load',event=>{const image=event.target;if(!(image instanceof HTMLImageElement)||image.closest('.chapter-page')!==app.firstElementChild)return;const rect=image.getBoundingClientRect();if(rect.width>0&&rect.height>0&&rect.bottom>0&&rect.top<innerHeight&&rect.right>0&&rect.left<innerWidth){viewportSnapshots.delete(snapshotKey(currentPath,window.scrollY));scheduleSnapshot()}},true);
 addEventListener('pagehide',()=>{const position=captureScrollPosition(app);scrollMemory.set(currentPath,position);history.replaceState({...historyScrollState(),scrollPosition:position},'',location.href)});
 app.replaceChildren(buildPage(currentPath));
