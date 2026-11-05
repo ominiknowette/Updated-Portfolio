@@ -1,4 +1,4 @@
-import {projects,graphics,workPage,casePage,graphicPage,experiencePage,toolboxPage,offClockPage,contactPage,assetSize} from './content.js?v=20261105perf';
+import {projects,graphics,workPage,casePage,graphicPage,experiencePage,toolboxPage,offClockPage,contactPage,assetSize} from './content.js?v=20261106portrait';
 import {icon} from './icons.js?v=20261105perf';
 const A = '/assets/';
 const chapters = [
@@ -123,8 +123,12 @@ function buildPage(path){
   const c=chapter(path)||(project?{path,name:project.name,number:project.number,deck:project.kind}:{path,name:'Page not found',number:'?',deck:''});
   const section=document.createElement('section');section.className='chapter-page';section.dataset.path=path;
   const content=path==='/'?cover():path==='/contents'?contents():path==='/about'?about():path==='/work'?workPage():project?casePage(project):path==='/graphic-design'?graphicPage():path==='/experience'?experiencePage():path==='/toolbox'?toolboxPage():path==='/off-the-clock'?offClockPage():path==='/contact'?contactPage():`<div class="chapter-body"><h1 tabindex="-1">Page not found.</h1><p><a href="/contents" data-route="/contents">Go to Contents</a></p></div>`;
-  const isChapter=!!chapter(path),index=chapters.findIndex(x=>x.path===path),next=chapters[index+1];
-  const cornerLabel=project?'Next project': 'Next chapter';
+  const isChapter=!!chapter(path),index=chapters.findIndex(x=>x.path===path);
+  const followingProject=project?projects[projects.indexOf(project)+1]:null;
+  const next=followingProject
+    ?{path:`/work/${followingProject.slug}`,name:followingProject.name}
+    :project?chapter('/graphic-design'):chapters[index+1];
+  const cornerLabel=followingProject?'Next project':'Next chapter';
   section.innerHTML=`${utility(c)}<main class="sheet ${path==='/'?'sheet-cover':`sheet-${c.number}`}" id="main">${content}${path==='/'?'':furniture(c)}${isChapter?pageNav(c):''}${next&&path!=='/'?routeLink(next.path,`<span>${cornerLabel}: ${next.name}</span><i></i>`,'forward','corner-turn corner-next'):''}</main>`;
   return section;
 }
