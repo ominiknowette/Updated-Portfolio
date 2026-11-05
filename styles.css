@@ -174,7 +174,7 @@
  .off-football-copy p{font-size:17px}
 }
 /* Portrait pointer follows the portrait asset’s transparent silhouette bounds. */
-.cover-photo-group .cover-doodle{left:-100px;top:17%;width:500px;height:145px;transform:none}
+.cover-photo-group .cover-doodle{left:-100px;top:25%;width:460px;height:133px;transform:none}
 @media(max-width:1000px){.cover-photo-group .cover-doodle{left:calc(55vw - 548px);top:13%;width:245px;height:72px;transform:none}}
 @media(max-width:700px){.cover-photo-group{width:55%;right:-2%}.cover-photo-group .cover-doodle{left:calc(55vw - 420px);top:10%;width:245px;height:72px}}
 @media(max-width:520px){.cover-photo-group{width:74%}.cover-photo-group .cover-doodle{left:calc(74vw - 322px);top:14%;width:130px;height:42px}}
