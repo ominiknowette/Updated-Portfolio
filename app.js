@@ -1,4 +1,5 @@
-import {projects,graphics,workPage,casePage,graphicPage,experiencePage,toolboxPage,offClockPage,contactPage} from './content.js?v=20261104o';
+import {projects,graphics,workPage,casePage,graphicPage,experiencePage,toolboxPage,offClockPage,contactPage,assetSize} from './content.js?v=20261105perf';
+import {icon} from './icons.js?v=20261105perf';
 const A = '/assets/';
 const chapters = [
   {path:'/',name:'Cover',number:'00',deck:'An introduction'},
@@ -30,6 +31,13 @@ let suppressScrollPersistence=false;
 let scrollPersistFrame=0;
 const viewportSnapshots=new Map();
 let snapshotTimer=0;
+let idlePrefetchHandle=0;
+let idlePrefetchUsesTimeout=false;
+let snapshotIdleHandle=0;
+let snapshotIdleUsesTimeout=false;
+let lastInputAt=0;
+let snapshotCapture=null;
+let mapDrawFrame=0;
 
 function normalize(path){const normalized=path === '/' ? '/' : path.replace(/\/+$/,'');return normalized==='/work/smart-leads'?'/work':normalized}
 function chapter(path){return chapters.find(c=>c.path===path)}
@@ -86,10 +94,6 @@ function scheduleScrollPersistence(){
 function routeLink(path,label,mode='',klass=''){
   return `<a href="${path}" data-route="${path}"${mode?` data-turn="${mode}"`:''}${klass?` class="${klass}"`:''}>${label}</a>`;
 }
-function icon(name){
-  const paths={arrow:'<path d="M4 12h16m-6-6 6 6-6 6"/>',up:'<path d="M5 19 19 5M8 5h11v11"/>',close:'<path d="M5 5l14 14M19 5 5 19"/>',book:'<path d="M12 7c-3-2-6-2-9-1v13c3-1 6-1 9 1m0-13c3-2 6-2 9-1v13c-3-1-6-1-9 1V7Z"/>',back:'<path d="M20 12H4m6-6-6 6 6 6"/>'};
-  return `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${paths[name]||paths.arrow}</svg>`;
-}
 function utility(c){
   if(c.path==='/')return `<header class="utility utility-cover"><a href="/" data-route="/" class="wordmark">By David</a><span>An ongoing personal publication.</span>${routeLink('/contents','Contents '+icon('book'),'direct','utility-link')}</header>`;
   return `<header class="utility"><a href="/" data-route="/" class="wordmark">By David</a><span class="chapter-indicator">${c.number} / ${c.name}</span><nav aria-label="Publication controls">${routeLink('/contents','Contents '+icon('book'),'direct','utility-link')}${routeLink('/','Close the publication '+icon('close'),'close','utility-link')}</nav></header>`;
@@ -102,14 +106,14 @@ function pageNav(c){
 }
 function furniture(c){return `<div class="sheet-folio"><span>BY DAVID</span><span>${c.number}</span></div>`}
 function cover(){
-  return `<div class="cover-layout"><div class="cover-intro"><div class="cover-copy"><p class="eyebrow">A little introduction, before we get into everything</p><h1 tabindex="-1">Hello,<br>I'm <em>David.</em></h1><p class="lead">I make websites, mobile experiences and graphics with a little personality. Come in, have a look around.</p></div><div class="cover-actions">${routeLink('/contents','Open the edition '+icon('arrow'),'open','button button-ink')}${routeLink('/work','Explore my work '+icon('up'),'direct','under-link')}</div></div><div class="cover-photo-group"><img class="cover-person" src="${A}cover-cutout.png" width="1086" height="1448" alt="David in a blue sweatshirt giving a thumbs-up"><svg class="cover-doodle" viewBox="0 0 380 110" aria-hidden="true"><path d="M3 10C86 0 181 16 320 52M297 38l27 15-26 13" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="cover-caption">David Okafor<span>That’s me.</span></div></div><div class="cover-bottom"><span>WEB / MOBILE / GRAPHIC DESIGN</span><span>OPEN AT ANY CHAPTER</span></div>${routeLink('/contents','<span>Open the edition</span><i></i>','open','corner-turn corner-open')}</div>`;
+  return `<div class="cover-layout"><div class="cover-intro"><div class="cover-copy"><p class="eyebrow">A little introduction, before we get into everything</p><h1 tabindex="-1">Hello,<br>I'm <em>David.</em></h1><p class="lead">I make websites, mobile experiences and graphics with a little personality. Come in, have a look around.</p></div><div class="cover-actions">${routeLink('/contents','Open the edition '+icon('arrow'),'open','button button-ink')}${routeLink('/work','Explore my work '+icon('external'),'direct','under-link')}</div></div><div class="cover-photo-group"><img class="cover-person" src="${A}cover-cutout.webp" width="1086" height="1448" fetchpriority="high" decoding="async" alt="David in a blue sweatshirt giving a thumbs-up"><svg class="cover-doodle" viewBox="0 0 380 110" aria-hidden="true"><path d="M3 10C86 0 181 16 320 52M297 38l27 15-26 13" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="cover-caption">David Okafor<span>That’s me.</span></div></div><div class="cover-bottom"><span>WEB / MOBILE / GRAPHIC DESIGN</span><span>OPEN AT ANY CHAPTER</span></div>${routeLink('/contents','<span>Open the edition</span><i></i>','open','corner-turn corner-open')}</div>`;
 }
 function contents(){
-  const rows=chapters.slice(2).map(c=>`<li><span>${c.number}</span>${routeLink(c.path,`<strong>${c.name}</strong><small>${c.deck}</small>`,'direct')}<span class="contents-arrow">↗</span></li>`).join('');
-  return `<div class="chapter-body contents-body"><div class="chapter-kicker"><span>01 / THE INDEX</span><span>YOU CAN START ANYWHERE</span></div><h1 tabindex="-1">Make yourself<br><em>at home.</em></h1><p class="contents-deck">This edition is a little of what I make and a little of who I am. Pick a chapter, or keep turning.</p><ol class="contents-list">${rows}</ol><div class="contents-side"><img src="${A}outdoor-portrait.jpg" alt="David outdoors in a cap and blue patterned shirt"><span>A note from the margins: there is no required reading order.</span></div><div class="contents-extra"><a href="/assets/david-okafor-cv-public.pdf" download>Download my CV ↓</a><a href="mailto:okaforo253@gmail.com">Email me ↗</a></div></div>`;
+  const rows=chapters.slice(2).map(c=>`<li><span>${c.number}</span>${routeLink(c.path,`<strong>${c.name}</strong><small>${c.deck}</small>`,'direct')}<span class="contents-arrow">${icon('external')}</span></li>`).join('');
+  return `<div class="chapter-body contents-body"><div class="chapter-kicker"><span>01 / THE INDEX</span><span>YOU CAN START ANYWHERE</span></div><h1 tabindex="-1">Make yourself<br><em>at home.</em></h1><p class="contents-deck">This edition is a little of what I make and a little of who I am. Pick a chapter, or keep turning.</p><ol class="contents-list">${rows}</ol><div class="contents-side"><img src="${A}outdoor-portrait.jpg" ${assetSize('outdoor-portrait.jpg')} alt="David outdoors in a cap and blue patterned shirt" loading="lazy" decoding="async"><span>A note from the margins: there is no required reading order.</span></div><div class="contents-extra"><a href="/assets/david-okafor-cv-public.pdf" download>Download my CV ${icon('download')}</a><a href="mailto:okaforo253@gmail.com">Email me ${icon('external')}</a></div></div>`;
 }
 function about(){
-  return `<div class="chapter-body about-body"><div class="chapter-kicker"><span>02 / ABOUT</span><span>HELLO AGAIN / I'M GLAD YOU'RE HERE</span></div><div class="about-grid"><div class="about-portrait"><img src="${A}about-cutout.png" width="940" height="1673" alt="David standing in a dark outfit"></div><div class="about-writing"><h1 tabindex="-1">A work<br>in <em>progress.</em></h1><div class="about-copy"><p>I'm David Okafor, a final-year Computer Science student at the University of Port Harcourt. I move between frontend development, mobile apps, full-stack work and design.</p><p>In 2026, I worked as a Mobile App Developer Intern at Bincom. I developed with Apache Cordova, worked in a team and helped mobile-development trainees through practical sessions.</p><p>There's still plenty I want to learn. This is a place to see what I've made so far and where I'm heading.</p></div><div class="about-facts"><b>✳</b><span>Mobile, web & visual design<br>B.Sc. Computer Science in progress, 2023–2027</span></div></div></div><aside class="about-sticker"><img src="${A}outdoor-portrait.jpg" alt="David outdoors in a cap and blue patterned shirt"></aside></div>`;
+  return `<div class="chapter-body about-body"><div class="chapter-kicker"><span>02 / ABOUT</span><span>HELLO AGAIN / I'M GLAD YOU'RE HERE</span></div><div class="about-grid"><div class="about-portrait"><img src="${A}about-cutout.webp" width="940" height="1673" alt="David standing in a dark outfit" decoding="async"></div><div class="about-writing"><h1 tabindex="-1">A work<br>in <em>progress.</em></h1><div class="about-copy"><p>I'm David Okafor, a final-year Computer Science student at the University of Port Harcourt. I move between frontend development, mobile apps, full-stack work and design.</p><p>In 2026, I worked as a Mobile App Developer Intern at Bincom. I developed with Apache Cordova, worked in a team and helped mobile-development trainees through practical sessions.</p><p>There's still plenty I want to learn. This is a place to see what I've made so far and where I'm heading.</p></div><div class="about-facts"><b>${icon('sparkle')}</b><span>Mobile, web & visual design<br>B.Sc. Computer Science in progress, 2023–2027</span></div></div></div><aside class="about-sticker"><img src="${A}outdoor-portrait.jpg" ${assetSize('outdoor-portrait.jpg')} alt="David outdoors in a cap and blue patterned shirt" loading="lazy" decoding="async"></aside></div>`;
 }
 function buildPage(path){
   const project=projectFor(path);
@@ -122,14 +126,14 @@ function buildPage(path){
   return section;
 }
 const CHAPTER_PREFETCH = {
-  '/': ['/assets/outdoor-portrait.jpg', '/assets/about-cutout.png'],
-  '/contents': ['/assets/about-cutout.png', '/assets/auto-job-serve-landing.png'],
-  '/about': ['/assets/auto-job-serve-landing.png', '/assets/boi-dashboard.jpg', '/assets/south-side-home.jpg'],
-  '/work': ['/assets/poster-house-party.jpg', '/assets/poster-birthday.jpg'],
-  '/graphic-design': ['/assets/avatar-afterhours.png', '/assets/sticker-luffy.png'],
-  '/experience': ['/assets/avatar-afterhours.png', '/assets/sticker-luffy.png'],
-  '/toolbox': ['/assets/avatar-afterhours.png', '/assets/sticker-luffy.png', '/assets/sticker-naruto.png', '/assets/sticker-manga.png', '/assets/manchester-city-crest.png'],
-  '/off-the-clock': ['/assets/icon-email.svg', '/assets/icon-whatsapp.svg', '/assets/icon-github.svg', '/assets/icon-linkedin.svg']
+  '/': ['/assets/outdoor-portrait.jpg'],
+  '/contents': ['/assets/about-cutout.webp'],
+  '/about': ['/assets/auto-job-serve-landing.webp'],
+  '/work': [],
+  '/graphic-design': [],
+  '/experience': [],
+  '/toolbox': [],
+  '/off-the-clock': []
 };
 const PRELOADED_ASSETS = new Set();
 function prefetchAssets(urls){
@@ -137,12 +141,17 @@ function prefetchAssets(urls){
     if(!url || PRELOADED_ASSETS.has(url)) continue;
     PRELOADED_ASSETS.add(url);
     const img = new Image();
+    img.decoding='async';img.fetchPriority='low';
     img.src = url;
   }
 }
 function scheduleIdlePrefetch(path){
+  if(idlePrefetchHandle){idlePrefetchUsesTimeout?clearTimeout(idlePrefetchHandle):cancelIdleCallback(idlePrefetchHandle);idlePrefetchHandle=0}
   const schedule = window.requestIdleCallback || (cb => setTimeout(cb, 600));
-  schedule(()=>{
+  idlePrefetchUsesTimeout=!window.requestIdleCallback;
+  idlePrefetchHandle=schedule(()=>{
+    idlePrefetchHandle=0;
+    if(normalize(location.pathname)!==path)return;
     const list = [...(CHAPTER_PREFETCH[path] || [])];
     const idx = chapters.findIndex(c => c.path === path);
     if(idx !== -1){
@@ -152,7 +161,7 @@ function scheduleIdlePrefetch(path){
       if(prev && CHAPTER_PREFETCH[prev]) list.push(...CHAPTER_PREFETCH[prev]);
     }
     prefetchAssets(list);
-  });
+  },{timeout:1600});
 }
 
 function clearTemporaryTurnStyles(page){
@@ -176,11 +185,21 @@ function captureEngineReady(){
 }
 async function captureViewport(page){
   await captureEngineReady();
-  if(document.fonts?.ready)await Promise.race([document.fonts.ready,new Promise(resolve=>setTimeout(resolve,600))]);
+  // Capture the currently painted font state; waiting on remote font delivery delayed every first turn.
   const viewportWidth=innerWidth,viewportHeight=innerHeight;
   const crop=Math.max(0,-page.getBoundingClientRect().top);
+  const images=[...page.querySelectorAll('img')];
+  const readyImageSources=new Set(images.filter(image=>image.complete&&image.naturalWidth>0).map(image=>image.currentSrc||image.src));
+  const pruneSelector='.project-stop,.off-group,.off-notes,.case-section,.case-hero,.case-more';
+  const heavyBlocks=[...page.querySelectorAll(pruneSelector)].map(element=>{const rect=element.getBoundingClientRect(),style=getComputedStyle(element);return{rect:{top:rect.top,bottom:rect.bottom,height:rect.height},marginTop:style.marginTop,marginBottom:style.marginBottom}});
   const bitmap=await Promise.race([
-    window.html2canvas(page,{backgroundColor:'#38362f',logging:false,useCORS:true,imageTimeout:800,scale:Math.min(devicePixelRatio||1,1.35),x:0,y:crop,width:viewportWidth,height:viewportHeight}),
+    window.html2canvas(page,{backgroundColor:'#38362f',logging:false,useCORS:true,imageTimeout:800,scale:Math.min(devicePixelRatio||1,1.15),x:0,y:crop,width:viewportWidth,height:viewportHeight,onclone:clone=>{
+      const clonedPage=clone.querySelector('.chapter-page');
+      if(!clonedPage)return;
+      const clonedHeavyBlocks=[...clonedPage.querySelectorAll(pruneSelector)];
+      heavyBlocks.forEach((block,index)=>{if(block.rect.bottom>0&&block.rect.top<viewportHeight)return;const target=clonedHeavyBlocks[index];if(!target)return;target.replaceChildren();target.style.height=`${block.rect.height}px`;target.style.minHeight=`${block.rect.height}px`;target.style.marginTop=block.marginTop;target.style.marginBottom=block.marginBottom;});
+      clonedPage.querySelectorAll('img').forEach(image=>{if(readyImageSources.has(image.currentSrc||image.src))return;image.removeAttribute('src');image.removeAttribute('srcset');image.style.visibility='hidden'});
+    }}),
     new Promise((_,reject)=>setTimeout(()=>reject(new Error('Paper capture timed out')),3500))
   ]);
   if(viewportWidth!==innerWidth||viewportHeight!==innerHeight)throw new Error('Viewport changed during paper preparation');
@@ -191,40 +210,51 @@ function snapshotKey(path,scrollY){return `${path}|${Math.round(scrollY)}|${inne
 function snapshotFor(page,path,scrollY){
   const key=snapshotKey(path,scrollY);
   if(viewportSnapshots.has(key))return viewportSnapshots.get(key);
-  const promise=captureViewport(page).then(bitmap=>{
+  if(snapshotCapture){
+    const active=snapshotCapture;let waiting;
+    waiting=active.catch(()=>undefined).then(()=>{if(viewportSnapshots.get(key)===waiting)viewportSnapshots.delete(key);return snapshotFor(page,path,scrollY)});
+    viewportSnapshots.set(key,waiting);
+    return waiting;
+  }
+  let promise;
+  promise=captureViewport(page).then(bitmap=>{
     if(path===currentPath&&Math.abs(window.scrollY-scrollY)>1)throw new Error('Page scrolled during capture');
     return bitmap;
-  }).catch(error=>{viewportSnapshots.delete(key);throw error});
+  }).catch(error=>{viewportSnapshots.delete(key);throw error}).finally(()=>{if(snapshotCapture===promise)snapshotCapture=null});
+  snapshotCapture=promise;
   viewportSnapshots.set(key,promise);
   while(viewportSnapshots.size>4)viewportSnapshots.delete(viewportSnapshots.keys().next().value);
   return promise;
 }
 function scheduleSnapshot(){
   clearTimeout(snapshotTimer);
+  if(snapshotIdleHandle){snapshotIdleUsesTimeout?clearTimeout(snapshotIdleHandle):cancelIdleCallback(snapshotIdleHandle);snapshotIdleHandle=0}
   if(turning)return;
   snapshotTimer=setTimeout(()=>{
+    snapshotTimer=0;
     const page=app.firstElementChild,path=currentPath,scrollY=window.scrollY;
     const run=()=>{
+      snapshotIdleHandle=0;
       if(turning||page!==app.firstElementChild||path!==currentPath||Math.abs(window.scrollY-scrollY)>1)return;
+      const quietFor=performance.now()-lastInputAt;
+      const inputPending=!!navigator.scheduling?.isInputPending?.({includeContinuous:true});
+      if(snapshotCapture){snapshotTimer=setTimeout(run,180);return}
+      // Prepare the current viewport early enough that the first page turn is
+      // usually backed by a ready sheet. Keep the input-pending guard so the
+      // capture never competes with an active scroll, tap, or key press.
+      if(quietFor<250||inputPending){
+        snapshotTimer=setTimeout(()=>{
+          snapshotTimer=0;
+          snapshotIdleUsesTimeout=!window.requestIdleCallback;
+          snapshotIdleHandle=window.requestIdleCallback?requestIdleCallback(run,{timeout:600}):setTimeout(run,100);
+        },inputPending?120:Math.max(60,250-quietFor));
+        return;
+      }
       snapshotFor(page,path,scrollY).catch(()=>{});
     };
-    if('requestIdleCallback' in window)requestIdleCallback(run,{timeout:1800});else run();
-  },900);
-}
-async function prepareDestination(page){
-  const visible=[...page.querySelectorAll('img')].filter(image=>{
-    const rect=image.getBoundingClientRect();
-    return rect.width>0&&rect.height>0&&rect.bottom>0&&rect.top<innerHeight;
-  });
-  const ready=Promise.allSettled(visible.map(image=>{
-    image.loading='eager';
-    return image.decode ? image.decode() : new Promise(resolve=>{
-      if(image.complete)return resolve();
-      image.addEventListener('load',resolve,{once:true});image.addEventListener('error',resolve,{once:true});
-    });
-  }));
-  await Promise.race([ready,new Promise(resolve=>setTimeout(resolve,1500))]);
-  await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    snapshotIdleUsesTimeout=!window.requestIdleCallback;
+    snapshotIdleHandle=window.requestIdleCallback?requestIdleCallback(run,{timeout:600}):setTimeout(run,100);
+  },280);
 }
 function paintFlexibleSheet(canvas,bitmap,progress){
   const ctx=canvas.getContext('2d');
@@ -282,7 +312,7 @@ async function animateFlexibleTurn(outgoing,incoming,mode,destinationPosition,ou
   const destinationY=Math.max(0,Number(destinationPosition?.windowY)||0);
   incoming.style.position='fixed';incoming.style.inset='0';incoming.style.top=`${-destinationY}px`;incoming.style.width='100%';incoming.style.zIndex='-1';incoming.inert=true;incoming.setAttribute('aria-hidden','true');app.insertBefore(incoming,outgoing);
   let bitmap;
-  try{[bitmap]=await Promise.all([snapshotFor(backwards?incoming:outgoing,backwards?incoming.dataset.path:outgoing.dataset.path,backwards?destinationY:outgoingPosition.windowY),prepareDestination(incoming)])}catch(error){
+  try{[bitmap]=await Promise.all([snapshotFor(backwards?incoming:outgoing,backwards?incoming.dataset.path:outgoing.dataset.path,backwards?destinationY:outgoingPosition.windowY)])}catch(error){
     if(incoming.parentElement)incoming.remove();incoming.style.cssText='';incoming.inert=false;incoming.removeAttribute('aria-hidden');throw error;
   }
   await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
@@ -513,7 +543,9 @@ document.addEventListener('click',e=>{
 });
 addEventListener('popstate',event=>navigate(location.pathname,routeTurn(currentPath,normalize(location.pathname)),false,{scrollPosition:event.state?.scrollPosition||scrollMemory.get(normalize(location.pathname))||{windowY:0,containerY:0}}));
 addEventListener('scroll',()=>{scheduleScrollPersistence();scheduleSnapshot()},{passive:true,capture:true});
-document.addEventListener('load',event=>{if(event.target instanceof HTMLImageElement&&app.contains(event.target)){viewportSnapshots.clear();scheduleSnapshot()}},true);
+const noteInput=()=>{lastInputAt=performance.now()};
+for(const type of ['pointerdown','keydown','wheel','touchstart'])addEventListener(type,noteInput,{passive:type!=='keydown',capture:true});
+document.addEventListener('load',event=>{const image=event.target;if(!(image instanceof HTMLImageElement)||image.closest('.chapter-page')!==app.firstElementChild)return;const rect=image.getBoundingClientRect();if(rect.width>0&&rect.height>0&&rect.bottom>0&&rect.top<innerHeight&&rect.right>0&&rect.left<innerWidth){viewportSnapshots.delete(snapshotKey(currentPath,window.scrollY));scheduleSnapshot()}},true);
 addEventListener('pagehide',()=>{const position=captureScrollPosition(app);scrollMemory.set(currentPath,position);history.replaceState({...historyScrollState(),scrollPosition:position},'',location.href)});
 app.replaceChildren(buildPage(currentPath));
 topScrollPosition(app);
@@ -524,7 +556,7 @@ scheduleSnapshot();
 function afterRender(path){
   revealObserver?.disconnect();revealObserver=null;
   if(path==='/work'){
-    requestAnimationFrame(drawMap);document.querySelectorAll('.project-picture img').forEach(img=>img.addEventListener('load',drawMap,{once:true}));
+    scheduleMapDraw();
   }
   if(path==='/off-the-clock'){
     const body=document.querySelector('.off-body'),groups=[...document.querySelectorAll('.off-body [data-reveal]')];
@@ -534,7 +566,8 @@ function afterRender(path){
   if(path==='/graphic-design')syncFolder();
   scheduleIdlePrefetch(path);
 }
-addEventListener('resize',()=>{viewportSnapshots.clear();scheduleSnapshot();if(currentPath==='/work')drawMap()});
+addEventListener('resize',()=>{viewportSnapshots.clear();scheduleSnapshot();if(currentPath==='/work')scheduleMapDraw()});
+function scheduleMapDraw(){if(mapDrawFrame)return;mapDrawFrame=requestAnimationFrame(()=>{mapDrawFrame=0;drawMap()})}
 function drawMap(){
   const map=document.querySelector('#project-map'),svg=map?.querySelector('.map-lines');if(!map||!svg)return;
   const mr=map.getBoundingClientRect(),anchors=[...map.querySelectorAll('.stop-anchor')].map(a=>{const r=a.getBoundingClientRect();return {x:r.left-mr.left+r.width/2,y:r.top-mr.top+r.height/2}});
@@ -546,7 +579,7 @@ function syncFolder(){
   folder.classList.toggle('open',folderOpen);folder.classList.toggle('neat',folderNeat);
   folder.querySelectorAll('.print').forEach(print=>print.disabled=!folderOpen);
   folder.querySelector('.folder-front').setAttribute('aria-expanded',String(folderOpen));
-  folder.querySelector('.folder-front b').textContent=folderOpen?'CLOSE FOLDER ↙':'OPEN FOLDER ↗';
+  folder.querySelector('.folder-front b').innerHTML=folderOpen?`Close folder ${icon('folderClose')}`:`Open folder ${icon('folderOpen')}`;
   folder.parentElement.querySelector('.folder-actions [data-folder-toggle]').textContent=folderOpen?'Close folder':'Open folder';
 }
 function toggleFolder(){folderOpen=!folderOpen;if(!folderOpen)folderNeat=false;syncFolder()}
@@ -557,7 +590,7 @@ function openViewer(index,origin){
   else if(origin)returnFocus=origin;
   viewerMode='art';viewerIndex=index;
   const g=graphics[index];
-  dialog.innerHTML=`<div class="viewer-bar"><span>${String(index+1).padStart(2,'0')} / ${String(graphics.length).padStart(2,'0')} — ${g.title}</span><button type="button" data-viewer-close aria-label="Close artwork viewer">Close ×</button></div><div class="viewer-art"><img src="${A}${g.file}" alt="${g.alt}"></div><div class="viewer-actions"><button type="button" data-viewer-prev>← Previous</button><button type="button" data-viewer-all>View all</button><button type="button" data-viewer-next>Next →</button></div>`;
+  dialog.innerHTML=`<div class="viewer-bar"><span>${String(index+1).padStart(2,'0')} / ${String(graphics.length).padStart(2,'0')} — ${g.title}</span><button type="button" data-viewer-close aria-label="Close artwork viewer">Close ${icon('close')}</button></div><div class="viewer-art"><img src="${A}${g.file}" ${assetSize(g.file)} alt="${g.alt}" decoding="async"></div><div class="viewer-actions"><button type="button" data-viewer-prev>${icon('previous')} Previous</button><button type="button" data-viewer-all>View all</button><button type="button" data-viewer-next>Next ${icon('next')}</button></div>`;
   if(!dialog.open)dialog.showModal();dialog.oncancel=e=>{e.preventDefault();closeViewer()};dialog.querySelector('[data-viewer-close]').focus();
 }
 function openProjectViewer(src,alt,origin){
@@ -565,7 +598,7 @@ function openProjectViewer(src,alt,origin){
   if(!dialog){dialog=document.createElement('dialog');dialog.id='art-viewer';dialog.className='art-viewer';document.body.append(dialog)}
   if(!dialog.open){viewerScrollSnapshot=captureScrollPosition(app);returnFocus=origin||document.activeElement}
   viewerMode='project';viewerIndex=-1;
-  dialog.innerHTML=`<div class="viewer-bar"><span>${alt}</span><button type="button" data-viewer-close aria-label="Close enlarged project image">Close ×</button></div><div class="viewer-art"><img src="${src}" alt="${alt}"></div>`;
+  dialog.innerHTML=`<div class="viewer-bar"><span>${alt}</span><button type="button" data-viewer-close aria-label="Close enlarged project image">Close ${icon('close')}</button></div><div class="viewer-art"><img src="${src}" ${assetSize(src)} alt="${alt}" decoding="async"></div>`;
   if(!dialog.open)dialog.showModal();dialog.oncancel=e=>{e.preventDefault();closeViewer()};dialog.querySelector('[data-viewer-close]').focus();
 }
 function closeViewer(restore=true){const dialog=document.querySelector('#art-viewer');if(dialog?.open)dialog.close();if(restore){restoreScrollPosition(viewerScrollSnapshot,app);if(returnFocus?.isConnected)returnFocus.focus({preventScroll:true})}viewerIndex=-1;viewerScrollSnapshot=null;returnFocus=null;viewerMode='art';}
