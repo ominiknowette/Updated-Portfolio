@@ -242,12 +242,10 @@
   .cover-photo-group .cover-doodle-mobile{width:clamp(175px,calc(79vw - 236px),435px)}
 }
 
-/* Let the mobile portrait meet the page corner while softening the photo's straight left crop. */
+/* Let the mobile portrait meet the page corner without fading the hand. */
 @media(max-width:850px){
   .cover-photo-group .cover-person{
     bottom:-45px;
-    -webkit-mask-image:linear-gradient(to right,transparent,#000 20px);
-    mask-image:linear-gradient(to right,transparent,#000 20px);
   }
 }
 @media(max-width:520px){
