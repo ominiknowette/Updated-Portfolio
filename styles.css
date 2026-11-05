@@ -224,3 +224,20 @@
   .sheet:before{display:none}
   .cover-person,.about-portrait img,.off-avatar,.off-sticker{filter:none}
 }
+
+/* Cover actions share one baseline; the mobile arrow belongs to the portrait note. */
+.cover-actions .under-link{display:inline-flex;align-items:center;gap:6px;line-height:1.2}
+.cover-doodle-mobile{display:none}
+@media(max-width:850px){
+  .cover-photo-group .cover-doodle-desktop{display:none}
+  .cover-photo-group .cover-doodle-mobile{display:block;left:calc(6% + 95px);top:calc(10% + 42px);right:auto;width:70px;height:90px;max-width:none;transform:none}
+}
+@media(max-width:390px){
+  .cover-photo-group .cover-doodle-mobile{width:clamp(40px,calc(42vw - 94px),70px)}
+}
+@media(min-width:391px) and (max-width:520px){
+  .cover-photo-group .cover-doodle-mobile{width:clamp(85px,calc(70vw - 189px),175px)}
+}
+@media(min-width:521px) and (max-width:850px){
+  .cover-photo-group .cover-doodle-mobile{width:clamp(175px,calc(79vw - 236px),435px)}
+}
