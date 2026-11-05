@@ -1,32 +1,137 @@
 # By David
 
-David Okafor’s portfolio is a static site with independent chapter URLs and paper page turns. The `site` directory is the deployment artifact; Vercel rewrites and the legacy project redirect are configured in `vercel.json`.
+A portfolio website for David Okafor, built as a paper-inspired digital publication. The experience blends storytelling, chapter-based navigation, and animated page turns to present selected work, graphic design, experience, and contact details in a unique editorial format.
 
-## Local preview
+This project is intentionally static and lightweight: it runs with plain HTML, CSS, and JavaScript, with no framework or bundler required.
 
-From `C:\Users\admin\Documents\Redesign`:
+## Live preview
 
-```powershell
-python site\serve.py
+Start the local preview server from the project root:
+
+```bash
+python serve.py
 ```
 
-Open `http://127.0.0.1:4174/`.
+Then open:
 
-## Source layout
+```text
+http://127.0.0.1:4174/
+```
 
-- `app.js`: chapter routing, history, page-turn animation, project-map paths, and artwork/project-image viewers.
-- `content.js`: project records, verified stacks, and chapter content.
-- `styles.css`: paper layout, responsive rules, folder interaction, and reduced-motion behavior.
-- `assets/`: supplied project screenshots, artwork, portrait stickers, technology icons, Manchester City crest, paper texture, page-capture library, and public CV.
+## Overview
 
-Internal links marked `direct` resolve to the correct forward, backward, open, or close turn. Normal turns use a fixed viewport capture with a travelling fold, paper underside and contact shadow. The fold is painted on an `OffscreenCanvas` worker, with progress based on elapsed `requestAnimationFrame` time. The visible turning surface has the same dimensions for short and long chapters; long pages continue to scroll normally between turns. Reduced motion changes pages directly, and an emergency DOM turn remains available if capture or the worker fails.
+This portfolio is designed like a physical publication rather than a typical modern portfolio landing page. It includes:
 
-Auto Job Serve is the first featured project and is described as a collaborative Bincom internship contribution. Its verified technology list is Next.js, React, Tailwind CSS, Supabase, and Supabase Authentication. The live URL is linked. David supplied authentic landing-page and sign-in screen captures, shown with their proportions intact. The dashboard graphic is illustrative; authentication, matching, and signed-in behavior are not claimed as verified.
+- chapter-style navigation
+- animated “paper turn” transitions between pages
+- project case studies and gallery views
+- graphic design and editorial sections
+- responsive layout for desktop and mobile experience
+- static asset-driven architecture
 
-ArrayCalc, Reach, and MCC School Portal are text-led repository entries with their GitHub links and known stacks. Their map and case entries contain no project previews. The removed Smart Leads URL redirects to Selected Works. BOI uses demonstration data; AnkaraWears is a sample storefront; Caelum Media’s marketing results are not attributed to this portfolio contribution.
+The site presents work in a more narrative form, giving each project its own moment and context instead of a conventional card-based layout.
 
-## Verification status
+## Features
 
-JavaScript syntax checks pass for `app.js`, `content.js`, and `paper-turn-worker.js`; `vercel.json` parses successfully. Edge browser review covered 18 chapter/project routes at 13 viewport sizes from 320 px mobile through 1920 px desktop, plus landscape. The audit found no document overflow, clipped content, or missing local images. Touch emulation checked the design folder, artwork and project screenshot viewers, and their close/return behavior at 320, 390, 768, and 1440 px. Forward/backward chapter turns, keyboard focus, resize during a turn, orientation change, browser Back, reduced motion, and direct route refresh were also checked.
+- Smooth route-like navigation between chapters
+- Paper-turn motion effects with reduced-motion fallback
+- Project and portfolio case study pages
+- Graphic design gallery and image viewer
+- Experience and education section
+- Contact page with social/project references
+- Static deployment support for Vercel
 
-Testing used headless Microsoft Edge on Windows with mobile viewport/touch emulation. No physical iOS or Android browser was available. There is no package manifest, development bundle, or production build step. Vercel serves this directory directly with the rewrites in `vercel.json`; test results and the remaining cold-first-turn frame gap are documented in [the performance report](../recordings/performance-report.md).
+## Project structure
+
+```text
+.
+├── app.js                 # Routing, page rendering, page-turn animation, viewers
+├── content.js             # Portfolio content, project entries, graphics, metadata
+├── styles.css             # Layout, typography, interaction design, responsive styling
+├── index.html             # App shell and document metadata
+├── serve.py               # Local static server for preview
+├── paper-turn-worker.js   # Worker logic for paper-turn visual effects
+├── vercel.json            # Deployment configuration for Vercel
+├── assets/                # Images, icons, textures, project assets, graphics
+├── README.md              # Project documentation
+├── .gitignore             # Ignore rules
+└── LICENSE                # If present in your repository
+```
+
+## Tech stack
+
+This project is built using:
+
+- HTML
+- CSS
+- JavaScript
+- Python (for local static serving)
+- Vercel (deployment target)
+
+There is no package manifest, build pipeline, or framework setup in this repository. The site is served as static files.
+
+## Getting started
+
+### Prerequisites
+
+- Python 3.x
+
+### Run locally
+
+From the repository root:
+
+```bash
+python serve.py
+```
+
+Then visit:
+
+```text
+http://127.0.0.1:4174/
+```
+
+## Deployment
+
+This project is configured for static deployment and is compatible with Vercel. The repository includes `vercel.json`, which supports rewritten routes for the portfolio.
+
+To deploy:
+
+1. Push the repository to GitHub
+2. Import it into Vercel
+3. Set the project to use the root directory
+4. Deploy without any additional build step
+
+## Content highlights
+
+The portfolio includes a mix of:
+
+- featured client/project work
+- repository-based case studies
+- design and experiments
+- personal and professional background
+- technology and workflow references
+
+Project entries cover areas such as:
+
+- web applications
+- business and landing pages
+- UI-driven product concepts
+- design and visual communication
+- personal portfolio storytelling
+
+## Notes
+
+This is a handcrafted static portfolio, not a React or Next.js app. The project prioritizes design and interaction over framework complexity, making it ideal as a single-page, editorial-style portfolio experience.
+
+## Verification
+
+The project includes validation work for:
+
+- JavaScript syntax checks for core files
+- `vercel.json` parse validation
+- browser-based review across chapter routes and viewport sizes
+- motion and responsiveness testing with reduced-motion considerations
+
+## License
+
+If you are publishing this project publicly, check whether a license file exists in the repository and confirm the correct usage terms before redistribution.
