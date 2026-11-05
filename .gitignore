@@ -1,13 +1,11 @@
-/node_modules
-/.next/
-/out/
-.env*.local
+__pycache__/
+*.py[cod]
+node_modules/
+.vercel/
 .DS_Store
-*.tsbuildinfo
-next-env.d.ts
-
-# Local browser/screenshot QA artifacts
-edge-*/
-qa-*.png
-visual-*.png
-.old-portrait-reference/
+.env*
+!.env.example
+dist/
+build/
+coverage/
+*.log
