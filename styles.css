@@ -255,3 +255,11 @@
     text-shadow:0 0 4px var(--paper),0 0 8px var(--paper);
   }
 }
+
+/* Keep the portrait after the expanded copy so text length cannot make them overlap. */
+@media(max-width:700px){
+  .about-body{padding-bottom:100px}
+  .about-grid{display:flex;flex-direction:column}
+  .about-writing{order:1}
+  .about-portrait{order:2;position:relative;left:auto;bottom:auto;width:min(70%,320px);height:clamp(340px,105vw,450px);min-height:0;margin-top:40px}
+}
